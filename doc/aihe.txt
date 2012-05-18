@@ -1,0 +1,67 @@
+Tietorakenteiden harjoitustyö, alkukesä 2012
+============================================
+
+Tehtävänanto
+------------
+
+  Toteuta Lempel-Ziv 78 -perusalgoritmi, joka käyttää trie-rakennetta
+  eli prefiksipuuta aiemmin kohdattujen osajonojen
+  tunnistamiseen. Ohjelman tulisi tunnistaa fraasi ajassa O(n * log2
+  m), jossa n on fraasin pituus merkkeinä ja m solmun lasten
+  maksimimäärä (tässä tapauksessa 256). Vertaa ohjelmasi nopeutta ja
+  pakkaustehoa tekstitiedostoilla ja binääritiedostoilla
+  compress-ohjelmaan (compress-ohjelma on yksi Lempel-Ziv 78
+  -muunnelma ja on mukana ainakin laitoksen Linuxissa).
+
+  Jos trie-rakenne (sanakirja) kasvaa ajon aikana liian suureksi,
+  algoritmilla on kaksi vaihtoehtoa. Se voi tyhjentää sanakirjan ja
+  aloittaa sen kasvattamisen alusta. Toinen vaihtoehto on, että
+  sanakirjaan ei enää lisätä uusia sanoja - samaa jäädytettyä
+  sanakirjaa käytetään loppuun asti.
+
+  (http://www.cs.helsinki.fi/u/ejunttil/opetus/tiraharjoitus/index.html#aiheita)
+
+Toteutus
+--------
+
+Toteutus on tarkoitus tehdä Javalla, mutta mahdollisuuksien mukaan
+myös C:tä voisi kokeilla rajoitetusti.
+
+Testaamista varten on hankittava sopiva testiaineisto.
+
+Toteutus tehdään vaiheissa:
+
+1. Ydinalgoritmin toteutus käyttäen Javan tietorakenteita. Dataa
+   käsitellään merkkijonoina ja sanakirja toteutetaan JDK:n HashMapin
+   avulla. Suunnitellaan muutama rajapinta, joiden avulla on helppo
+   testata eri tietorakenteita. Testiaineistona käytetään lyhyitä
+   merkkijonoja. Tulosdataa ei vielä koodata binäärimuotoon eikä
+   purkualgoritmia toteuteta. Yksikkötestauksen aloittaminen.
+
+2. Purkualgoritmin toteuttaminen. Luku ja kirjoitus tiedostoihin.
+
+3. Suorituskykytestien tekeminen. Lähtöaineistoksi pitää hankkia
+   erilaisia testitiedostoja. Olisi hyvä, jos suorituskykytestit
+   tuottaisivat tietoa suoritusajoista (ja muistinkäytöstä?)
+   erilaisilla ja erikokoisilla testiaineistoilla.
+
+4. Valmiiden tietorakenteiden korvaaminen omilla. Datan käsittely
+   binäärimuodossa (kuitenkin tavupohjaisesti?). Järkevä tulosdatan
+   koodaus. Sanakirjan koko valinnaiseksi. Strategia sanakirjan
+   täyttymiseen.
+
+5. Viimeistely.
+
+Huom! Suunnitelma on luonnosmainen.
+
+Lähteet
+-------
+
+http://en.wikipedia.org/wiki/LZ77_and_LZ78
+
+Pu, Ida M.: Fundamental Data Compression. Elsevier, 2006.
+  (http://www.scribd.com/doc/52508747/69/LZ78-family)
+
+Salomon, D.: Data Compression. The Complete Reference. 3rd
+  ed. Springer, 2004.
+
