@@ -17,6 +17,7 @@ public class StringDictWithHashMap implements StringDict {
     public StringDictWithHashMap() {
         nextIndex = 1;
         map = new HashMap<String, Integer>();
+        map.put("", 0);
     }
 
     @Override
