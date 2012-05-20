@@ -1,10 +1,42 @@
 package tiraht;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Tiraht {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+        for (String filename : args) {
+            LZ78Encoder encoder = new LZ78Encoder();
+            try {
+                long start = System.nanoTime();
+                FileReader reader = new FileReader(filename);
+                ArrayList<PairToken> tokens = encoder.encode(reader);
+                long stop = System.nanoTime();
+                System.out.println(filename
+                        + ": symboleita=" + encoder.getSymbolsRead()
+                        + ", koodeja=" + encoder.getTokensWritten()
+                        + ", aika=" + (stop-start) / 1000000. + "ms.");
+
+                start = System.nanoTime();
+                LZ78Decoder decoder = new LZ78Decoder();
+                String decodedStr = decoder.decode(tokens);
+                stop = System.nanoTime();
+                System.out.println(filename
+                        + ": symboleita=" + decodedStr.length()
+                        + ", aika=" + (stop-start) / 1000000. + "ms.");
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public static void smallSanityTest() throws IOException {
         /**
          * Esimerkki kirjasta Fundamental Data Compression, s. 137-138.
          */

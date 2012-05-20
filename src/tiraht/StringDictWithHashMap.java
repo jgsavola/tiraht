@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class StringDictWithHashMap implements StringDict {
     private int nextIndex;
     private HashMap<String, Integer> map;
+    private HashMap<Integer, String> rmap;
 
     /**
      * Luo uusi tyhjä sanakirja.
@@ -17,7 +18,9 @@ public class StringDictWithHashMap implements StringDict {
     public StringDictWithHashMap() {
         nextIndex = 1;
         map = new HashMap<String, Integer>();
+        rmap = new HashMap<Integer, String>();
         map.put("", 0);
+        rmap.put(0, "");
     }
 
     @Override
@@ -34,6 +37,7 @@ public class StringDictWithHashMap implements StringDict {
         int thisIndex = nextIndex++;
 
         map.put(s, thisIndex);
+        rmap.put(thisIndex, s);
 
         return thisIndex;
     }
@@ -54,13 +58,14 @@ public class StringDictWithHashMap implements StringDict {
      */
     @Override
     public String lookup(int index) {
-        for (String key : map.keySet()) {
-            int thisIndex = map.get(key);
-            if (thisIndex == index) {
-                return key;
-            }
-        }
-
-        return null;
+        return rmap.get(index);
+//        for (String key : map.keySet()) {
+//            int thisIndex = map.get(key);
+//            if (thisIndex == index) {
+//                return key;
+//            }
+//        }
+//
+//        return null;
     }
 }

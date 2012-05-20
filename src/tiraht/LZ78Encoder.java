@@ -14,14 +14,21 @@ import java.util.ArrayList;
  * @author jonne
  */
 public class LZ78Encoder {
-    StringDict dict;
+    private StringDict dict;
+
+    private int symbolsRead;
+    private int tokensWritten;
+    private int maxTokenIndex;
 
     public LZ78Encoder(StringDict dict) {
         this.dict = dict;
+        symbolsRead = 0;
+        tokensWritten = 0;
+        maxTokenIndex = 0;
     }
 
     public LZ78Encoder() {
-        this.dict = new StringDictWithHashMap();
+        this(new StringDictWithHashMap());
     }
 
     public ArrayList<PairToken> encode(String source) throws IOException {
@@ -34,6 +41,7 @@ public class LZ78Encoder {
 
         int symbol;
         while ((symbol = reader.read()) != -1) {
+            symbolsRead++;
             String key = "";
             int lastToken = 0;
             int token = 0;
@@ -41,6 +49,7 @@ public class LZ78Encoder {
                 int nextSymbol = reader.read();
                 if (nextSymbol == -1)
                     break;
+                symbolsRead++;
                 key += (char)symbol;
                 lastToken = token;
                 symbol = nextSymbol;
@@ -48,10 +57,23 @@ public class LZ78Encoder {
             /**
              * Avainta ei löytynyt sanakirjasta.
              */
-            int nextToken = dict.insert(key + (char)symbol);
+            maxTokenIndex = dict.insert(key + (char)symbol);
             tokens.add(new PairToken(lastToken, (char)symbol));
+            tokensWritten++;
         }
 
         return tokens;
+    }
+
+    public int getMaxTokenIndex() {
+        return maxTokenIndex;
+    }
+
+    public int getSymbolsRead() {
+        return symbolsRead;
+    }
+
+    public int getTokensWritten() {
+        return tokensWritten;
     }
 }
