@@ -38,4 +38,13 @@ public interface StringDict {
      * @return Seuraava vapaa indeksi.
      */
     public int getNextIndex();
+
+    /**
+     * Hae merkkijono, joka on tallennettu indeksillä <code>index</code>.
+     *
+     * @param index Kokonaislukuindeksi.
+     * @return Tallennettu merkkijono tai <code>null</code>, jos indeksiä
+     *         ei löydy.
+     */
+    public String lookup(int index);
 }

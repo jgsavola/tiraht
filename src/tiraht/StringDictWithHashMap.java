@@ -42,4 +42,25 @@ public class StringDictWithHashMap implements StringDict {
     public int getNextIndex() {
         return nextIndex;
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Huom! Haku toimii ajassa <code>O(n)</code>, missä <code>n</code> on
+     * sanojen määrä sanakirjassa.</p>
+     *
+     * @param index Haettava indeksi.
+     * @return Merkkijono tai <code>null</code>, jos indeksiä ei löydy.
+     */
+    @Override
+    public String lookup(int index) {
+        for (String key : map.keySet()) {
+            int thisIndex = map.get(key);
+            if (thisIndex == index) {
+                return key;
+            }
+        }
+
+        return null;
+    }
 }
