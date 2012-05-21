@@ -34,6 +34,7 @@ public class Tiraht {
                 System.out.println("pakkaus(" + filename + ")"
                         + ": symboleita=" + encoder.getSymbolsRead()
                         + ", koodeja=" + encoder.getTokensWritten()
+                        + " (" + encoder.getTokensWritten() / (stopTime-startTime) / 1000000000. + "/s"
                         + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
                         + ", muisti=" + (stopMem - startMem));
 
@@ -77,6 +78,7 @@ public class Tiraht {
                 System.out.println("pakkaus(" + filename + ")"
                         + ": symboleita=" + encoder.getSymbolsRead()
                         + ", koodeja=" + encoder.getTokensWritten()
+                        + " (" + (int)(encoder.getTokensWritten() / ((stopTime-startTime) / 1000000000.)) + "/s)"
                         + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
                         + ", muisti=" + (stopMem - startMem));
 
