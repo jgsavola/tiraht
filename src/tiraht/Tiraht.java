@@ -9,25 +9,40 @@ import java.util.logging.Logger;
 
 public class Tiraht {
     public static void main(String[] args) {
+        try {
+            smallSanityTest();
+        } catch (IOException ex) {
+            Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+        }
         for (String filename : args) {
             LZ78Encoder encoder = new LZ78Encoder();
             try {
-                long start = System.nanoTime();
+                Runtime.getRuntime().gc();
+                long startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                long startTime = System.nanoTime();
                 FileReader reader = new FileReader(filename);
                 ArrayList<PairToken> tokens = encoder.encode(reader);
-                long stop = System.nanoTime();
-                System.out.println(filename
+                long stopTime = System.nanoTime();
+                Runtime.getRuntime().gc();
+                long stopMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                System.out.println("pakkaus(" + filename + ")"
                         + ": symboleita=" + encoder.getSymbolsRead()
                         + ", koodeja=" + encoder.getTokensWritten()
-                        + ", aika=" + (stop-start) / 1000000. + "ms.");
+                        + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
+                        + ", muisti=" + (stopMem - startMem));
 
-                start = System.nanoTime();
+                Runtime.getRuntime().gc();
+                startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                startTime = System.nanoTime();
                 LZ78Decoder decoder = new LZ78Decoder();
                 String decodedStr = decoder.decode(tokens);
-                stop = System.nanoTime();
-                System.out.println(filename
+                stopTime = System.nanoTime();
+                Runtime.getRuntime().gc();
+                stopMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                System.out.println("purku(" + filename + ")  "
                         + ": symboleita=" + decodedStr.length()
-                        + ", aika=" + (stop-start) / 1000000. + "ms.");
+                        + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
+                        + ", muisti=" + (stopMem - startMem));
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
