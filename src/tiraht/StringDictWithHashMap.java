@@ -10,19 +10,41 @@ import java.util.HashMap;
 public class StringDictWithHashMap implements StringDict {
     private int nextIndex;
     private HashMap<String, Integer> map;
-    private HashMap<Integer, String> rmap;
+    private HashMap<Integer, String> reverseMap;
+    private boolean createReverseMap;
 
     /**
      * Luo uusi tyhjä sanakirja.
+     *
+     * Ei luoda käänteistä indeksointia (indeksi ==> merkkijono).
      */
     public StringDictWithHashMap() {
-        nextIndex = 1;
-        map = new HashMap<String, Integer>();
-        rmap = new HashMap<Integer, String>();
-        map.put("", 0);
-        rmap.put(0, "");
+        this(false);
     }
 
+    /**
+     * Luo uusi tyhjä sanakirja.
+     *
+     * @param createReverseMap Jos <code>true</code>, niin luodaan myös
+     *        käänteinen indeksointi (indeksi ==> merkkijono).
+     */
+    public StringDictWithHashMap(boolean createReverseMap) {
+        nextIndex = 1;
+        map = new HashMap<String, Integer>();
+        
+        this.createReverseMap = createReverseMap;
+        if (this.createReverseMap)
+            reverseMap = new HashMap<Integer, String>();
+
+        put("", 0);
+    }
+
+    private void put(String s, int i) {
+        map.put(s, i);
+        if (createReverseMap)
+            reverseMap.put(i, s);
+    }
+    
     @Override
     public int search(String s) {
         Integer index = map.get(s);
@@ -36,8 +58,7 @@ public class StringDictWithHashMap implements StringDict {
     public int insert(String s) {
         int thisIndex = nextIndex++;
 
-        map.put(s, thisIndex);
-        rmap.put(thisIndex, s);
+        put(s, thisIndex);
 
         return thisIndex;
     }
@@ -58,14 +79,16 @@ public class StringDictWithHashMap implements StringDict {
      */
     @Override
     public String lookup(int index) {
-        return rmap.get(index);
-//        for (String key : map.keySet()) {
-//            int thisIndex = map.get(key);
-//            if (thisIndex == index) {
-//                return key;
-//            }
-//        }
-//
-//        return null;
+        if (createReverseMap)
+            return reverseMap.get(index);
+        else {
+            for (String key : map.keySet()) {
+                int thisIndex = map.get(key);
+                if (thisIndex == index)
+                    return key;
+            }
+        }
+
+        return null;
     }
 }

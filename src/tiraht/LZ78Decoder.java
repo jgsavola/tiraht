@@ -15,7 +15,7 @@ public class LZ78Decoder {
     }
 
     public LZ78Decoder() {
-        this.dict = new StringDictWithHashMap();
+        this.dict = new StringDictWithHashMap(true);
     }
 
 //    public String decode(ArrayList<PairToken> tokens) {
