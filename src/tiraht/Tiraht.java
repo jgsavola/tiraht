@@ -1,5 +1,6 @@
 package tiraht;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,6 +10,11 @@ import java.util.logging.Logger;
 
 public class Tiraht {
     public static void main(String[] args) {
+        //testWithStrings(args);
+        testWithBytes(args);
+    }
+
+    public static void testWithStrings(String[] args) {
         try {
             smallSanityTest();
         } catch (IOException ex) {
@@ -41,6 +47,49 @@ public class Tiraht {
                 stopMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
                 System.out.println("purku(" + filename + ")  "
                         + ": symboleita=" + decodedStr.length()
+                        + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
+                        + ", muisti=" + (stopMem - startMem));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    public static void testWithBytes(String[] args) {
+        try {
+            smallSanityTest();
+        } catch (IOException ex) {
+            Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (String filename : args) {
+            LZ78ByteEncoder encoder = new LZ78ByteEncoder();
+            try {
+                Runtime.getRuntime().gc();
+                long startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                long startTime = System.nanoTime();
+                FileInputStream reader = new FileInputStream(filename);
+                ArrayList<Pair<Integer, Byte>> tokens = encoder.encode(reader);
+                long stopTime = System.nanoTime();
+                Runtime.getRuntime().gc();
+                long stopMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                System.out.println("pakkaus(" + filename + ")"
+                        + ": symboleita=" + encoder.getSymbolsRead()
+                        + ", koodeja=" + encoder.getTokensWritten()
+                        + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
+                        + ", muisti=" + (stopMem - startMem));
+
+                Runtime.getRuntime().gc();
+                startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                startTime = System.nanoTime();
+                LZ78ByteDecoder decoder = new LZ78ByteDecoder();
+                byte[] decodedBytes = decoder.decode(tokens);
+                stopTime = System.nanoTime();
+                Runtime.getRuntime().gc();
+                stopMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                System.out.println("purku(" + filename + ")  "
+                        + ": symboleita=" + decodedBytes.length
                         + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
                         + ", muisti=" + (stopMem - startMem));
             } catch (FileNotFoundException ex) {
