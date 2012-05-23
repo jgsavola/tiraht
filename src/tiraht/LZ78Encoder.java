@@ -42,22 +42,23 @@ public class LZ78Encoder {
         int symbol;
         while ((symbol = reader.read()) != -1) {
             symbolsRead++;
-            String key = "";
+            StringBuilder sb = new StringBuilder();
+            sb.append((char)symbol);
             int lastToken = 0;
             int token = 0;
-            while ((token = dict.search(key + (char)symbol)) != -1) {
+            while ((token = dict.search(sb.toString())) != -1) {
                 int nextSymbol = reader.read();
                 if (nextSymbol == -1)
                     break;
                 symbolsRead++;
-                key += (char)symbol;
                 lastToken = token;
                 symbol = nextSymbol;
+                sb.append((char)symbol);
             }
             /**
              * Avainta ei löytynyt sanakirjasta.
              */
-            maxTokenIndex = dict.insert(key + (char)symbol);
+            maxTokenIndex = dict.insert(sb.toString());
             tokens.add(new PairToken(lastToken, (char)symbol));
             tokensWritten++;
         }
