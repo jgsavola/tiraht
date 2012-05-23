@@ -10,16 +10,15 @@ import java.util.logging.Logger;
 
 public class Tiraht {
     public static void main(String[] args) {
-        //testWithStrings(args);
+
+        System.out.println("Tavuilla:");
         testWithBytes(args);
+
+        System.out.println("\nMerkkijonoilla:");
+        testWithStrings(args);
     }
 
     public static void testWithStrings(String[] args) {
-        try {
-            smallSanityTest();
-        } catch (IOException ex) {
-            Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
-        }
         for (String filename : args) {
             LZ78Encoder encoder = new LZ78Encoder();
             try {
@@ -34,7 +33,7 @@ public class Tiraht {
                 System.out.println("pakkaus(" + filename + ")"
                         + ": symboleita=" + encoder.getSymbolsRead()
                         + ", koodeja=" + encoder.getTokensWritten()
-                        + " (" + encoder.getTokensWritten() / (stopTime-startTime) / 1000000000. + "/s"
+                        + " (" + (int)(encoder.getTokensWritten() / ((stopTime-startTime) / 1000000000.)) + "/s)"
                         + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
                         + ", muisti=" + (stopMem - startMem));
 
@@ -57,13 +56,8 @@ public class Tiraht {
             }
         }
     }
-    
+
     public static void testWithBytes(String[] args) {
-        try {
-            smallSanityTest();
-        } catch (IOException ex) {
-            Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
-        }
         for (String filename : args) {
             LZ78ByteEncoder encoder = new LZ78ByteEncoder();
             try {
@@ -75,7 +69,7 @@ public class Tiraht {
                 long stopTime = System.nanoTime();
                 Runtime.getRuntime().gc();
                 long stopMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-                System.out.println("pakkaus(" + filename + ")"
+                System.err.println("pakkaus(" + filename + ")"
                         + ": symboleita=" + encoder.getSymbolsRead()
                         + ", koodeja=" + encoder.getTokensWritten()
                         + " (" + (int)(encoder.getTokensWritten() / ((stopTime-startTime) / 1000000000.)) + "/s)"
@@ -90,10 +84,11 @@ public class Tiraht {
                 stopTime = System.nanoTime();
                 Runtime.getRuntime().gc();
                 stopMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-                System.out.println("purku(" + filename + ")  "
+                System.err.println("purku(" + filename + ")  "
                         + ": symboleita=" + decodedBytes.length
                         + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
                         + ", muisti=" + (stopMem - startMem));
+                //System.out.print(new String(decodedBytes));
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
