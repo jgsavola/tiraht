@@ -3,6 +3,7 @@ package tiraht;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  *
@@ -14,7 +15,8 @@ public class ByteTrie<E> implements Trie {
     private boolean isValid;
     private E value;
 
-    private ArrayList<ByteTrie<E>> children;
+    //private ArrayList<ByteTrie<E>> children;
+    private TreeMap<Byte, ByteTrie<E>> children;
 
     public ByteTrie(byte nodeKey) {
         this();
@@ -23,7 +25,8 @@ public class ByteTrie<E> implements Trie {
 
     public ByteTrie() {
         this.isValid = false;
-        this.children = new ArrayList<ByteTrie<E>>();
+        //this.children = new ArrayList<ByteTrie<E>>();
+        this.children = new TreeMap<Byte, ByteTrie<E>>();
     }
 
     public E getValue() {
@@ -41,7 +44,7 @@ public class ByteTrie<E> implements Trie {
         ByteTrie<E> child = findChild(b);
         if (child == null) {
             child = new ByteTrie<E>(b);
-            children.add(child);
+            addChild(child);
         }
         child.insert(key, value);
     }
@@ -50,12 +53,24 @@ public class ByteTrie<E> implements Trie {
         insert(key.listIterator(), value);
     }
 
-    private ByteTrie<E> findChild(Byte b) {
-        for (ByteTrie<E> child : children)
-            if (child.nodeKey == b)
-                return child;
+//    private ByteTrie<E> findChild(Byte b) {
+//        for (ByteTrie<E> child : children)
+//            if (child.nodeKey == b)
+//                return child;
+//
+//        return null;
+//    }
+//
+//    private void addChild(ByteTrie<E> child) {
+//        children.add(child);
+//    }
 
-        return null;
+    private ByteTrie<E> findChild(Byte b) {
+        return children.get(b);
+    }
+
+    private void addChild(ByteTrie<E> child) {
+        children.put(child.nodeKey, child);
     }
 
     public E search(List<Byte> key) {
