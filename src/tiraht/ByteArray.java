@@ -2,6 +2,8 @@ package tiraht;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -11,6 +13,34 @@ public class ByteArray {
     private int capacity;
     private int length;
     private byte[] bytes;
+
+    public class ByteArrayIterator implements Iterator {
+        private ByteArray byteArray;
+        private int position;
+
+        public ByteArrayIterator(ByteArray byteArray) {
+            position = 0;
+            this.byteArray = byteArray;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return position < byteArray.length();
+        }
+
+        @Override
+        public Object next() throws NoSuchElementException {
+            if (position >= byteArray.length())
+                throw new NoSuchElementException();
+
+            return bytes[position++];
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("remove() not supported.");
+        }
+    }
 
     public ByteArray() {
         this(16);
@@ -95,5 +125,9 @@ public class ByteArray {
             return false;
         }
         return true;
+    }
+
+    public ByteArrayIterator iterator() {
+        return new ByteArrayIterator(this);
     }
 }

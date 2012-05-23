@@ -4,6 +4,8 @@
  */
 package tiraht;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -71,5 +73,38 @@ public class ByteArrayTest {
         byteArray33.add((byte)0x3);
         assertFalse("Arrays with different contents are not equal.",
                 byteArray32.equals(byteArray33));
+    }
+
+    /**
+     * Test of iterator method, of class ByteArray.
+     */
+    @Test
+    public void testIterator() {
+        ByteArray byteArray = new ByteArray(4);
+        Byte byte1 = (byte)0x80;
+        Byte byte2 = (byte)0x90;
+        Byte byte3 = (byte)0xa0;
+        byteArray.add(byte1);
+        byteArray.add(byte2);
+        byteArray.add(byte3);
+
+        Iterator it = byteArray.iterator();
+        assertTrue("Iteraattorissa on seuraava arvo.", it.hasNext());
+
+        assertEquals("Iteraattori palauttaa elementit oikeassa järjestyksessä.",
+                byte1, (Byte)it.next());
+        assertEquals("Iteraattori palauttaa elementit oikeassa järjestyksessä.",
+                byte2, (Byte)it.next());
+        assertEquals("Iteraattori palauttaa elementit oikeassa järjestyksessä.",
+                byte3, (Byte)it.next());
+
+        assertFalse("Iteraattorin loppu on oikeassa kohdassa.", it.hasNext());
+
+        try {
+            it.next();
+            fail("Tyhjennetyllä iteraattorilla next():n pitäisi tuottaa poikkeus.");
+        } catch (NoSuchElementException e) {
+            assertTrue(true);
+        }
     }
 }
