@@ -11,11 +11,14 @@ import java.util.logging.Logger;
 public class Tiraht {
     public static void main(String[] args) {
 
-        System.out.println("Tavuilla:");
-        testWithBytes(args);
+        System.out.println("Tavuilla (trie):");
+        testWithByteTrie(args);
 
-        System.out.println("\nMerkkijonoilla:");
-        testWithStrings(args);
+//        System.out.println("Tavuilla:");
+//        testWithBytes(args);
+//
+//        System.out.println("\nMerkkijonoilla:");
+//        testWithStrings(args);
     }
 
     public static void testWithStrings(String[] args) {
@@ -60,6 +63,46 @@ public class Tiraht {
     public static void testWithBytes(String[] args) {
         for (String filename : args) {
             LZ78ByteEncoder encoder = new LZ78ByteEncoder();
+            try {
+                Runtime.getRuntime().gc();
+                long startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                long startTime = System.nanoTime();
+                FileInputStream reader = new FileInputStream(filename);
+                ArrayList<Pair<Integer, Byte>> tokens = encoder.encode(reader);
+                long stopTime = System.nanoTime();
+                Runtime.getRuntime().gc();
+                long stopMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                System.err.println("pakkaus(" + filename + ")"
+                        + ": symboleita=" + encoder.getSymbolsRead()
+                        + ", koodeja=" + encoder.getTokensWritten()
+                        + " (" + (int)(encoder.getTokensWritten() / ((stopTime-startTime) / 1000000000.)) + "/s)"
+                        + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
+                        + ", muisti=" + (stopMem - startMem));
+
+                Runtime.getRuntime().gc();
+                startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                startTime = System.nanoTime();
+                LZ78ByteDecoder decoder = new LZ78ByteDecoder();
+                byte[] decodedBytes = decoder.decode(tokens);
+                stopTime = System.nanoTime();
+                Runtime.getRuntime().gc();
+                stopMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+                System.err.println("purku(" + filename + ")  "
+                        + ": symboleita=" + decodedBytes.length
+                        + ", aika=" + (stopTime-startTime) / 1000000. + "ms"
+                        + ", muisti=" + (stopMem - startMem));
+                //System.out.print(new String(decodedBytes));
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public static void testWithByteTrie(String[] args) {
+        for (String filename : args) {
+            LZ78ByteTrieEncoder encoder = new LZ78ByteTrieEncoder();
             try {
                 Runtime.getRuntime().gc();
                 long startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
