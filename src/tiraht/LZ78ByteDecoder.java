@@ -32,26 +32,19 @@ public class LZ78ByteDecoder {
 //    }
     
     public byte[] decode(ArrayList<Pair<Integer, Byte>> tokens) {
-        Vector<Byte> vec = new Vector<Byte>();
+        ByteArray output = new ByteArray();
 
         for (Pair<Integer, Byte> token : tokens) {
-            byte[] key = dict.lookup(token.first);
-            for (byte b : key)
-                vec.add(b);
-            vec.add(token.second);
+            ByteArray key = dict.lookup(token.first);
+            for (byte b : key.getBytes())
+                output.add(b);
+            output.add(token.second);
 
-            Vector<Byte> keyvec = new Vector<Byte>(key.length + 1);
-            for (int i = 0; i < key.length; i++)
-                keyvec.add(key[i]);
-            keyvec.add(token.second);
-            dict.insert(keyvec);
+            ByteArray keybb = new ByteArray(key.getBytes(), key.length() + 1);
+            keybb.add(token.second);
+            dict.insert(keybb);
         }
 
-        byte[] ret = new byte[vec.size()];
-        for (int i = 0; i < vec.size(); i++) {
-            ret[i] = vec.get(i);
-        }
-
-        return ret;
+        return output.getBytes();
     }
 }

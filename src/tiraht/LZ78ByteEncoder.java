@@ -2,7 +2,6 @@ package tiraht;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  *
@@ -37,7 +36,7 @@ public class LZ78ByteEncoder {
         int symbol;
         while ((symbol = reader.read()) != -1) {
             symbolsRead++;
-            Vector<Byte> key = new Vector<Byte>();
+            ByteArray key = new ByteArray();
             key.add((byte)symbol);
             int lastToken = 0;
             int token = 0;

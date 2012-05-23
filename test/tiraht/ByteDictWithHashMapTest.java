@@ -42,10 +42,10 @@ public class ByteDictWithHashMapTest {
         ByteDictWithHashMap dict = new ByteDictWithHashMap();
         int expResult = 1;
         int result = dict.insert(bytes);
-        assertEquals("Sanakirjaan ensimmäiseksi lisätyn avaimen arvo on 1", 
+        assertEquals("Sanakirjaan ensimmäiseksi lisätyn avaimen arvo on 1",
                 expResult, result);
 
-        byte[] lookedupBytes = dict.lookup(result);
+        byte[] lookedupBytes = dict.lookup(result).getBytes();
         assertEquals("Tavujono säilyy muuttumattomana sanakirjassa", 
                 lookedupBytes, bytes);
     }

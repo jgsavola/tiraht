@@ -48,9 +48,9 @@ public interface ByteDict {
      * @return Tallennettu tavujono tai <code>null</code>, jos indeksiä
      *         ei löydy.
      */
-    public byte[] lookup(int index);
+    public ByteArray lookup(int index);
 
-    public int search(Vector<Byte> key);
+    public int search(ByteArray key);
 
-    public int insert(Vector<Byte> key);
+    public int insert(ByteArray key);
 }
