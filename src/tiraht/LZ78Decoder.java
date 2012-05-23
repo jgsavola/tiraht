@@ -25,11 +25,10 @@ public class LZ78Decoder {
         StringBuilder output = new StringBuilder();
 
         for (PairToken token : tokens) {
-            String key = reverseMap.get(token.index);
+            String key = reverseMap.get(token.index) + token.c;
             output.append(key);
-            output.append(token.c);
-            int index = dict.insert(key + token.c);
-            reverseMap.put(index, key + token.c);
+            int index = dict.insert(key);
+            reverseMap.put(index, key);
         }
 
         return output.toString();
