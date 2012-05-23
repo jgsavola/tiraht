@@ -41,61 +41,6 @@ public class ByteArrayTest {
     }
 
     /**
-     * Test of add method, of class ByteArray.
-     */
-    @Test
-    public void testAdd() {
-        System.out.println("add");
-        byte b = 0;
-        ByteArray instance = new ByteArray();
-        instance.add(b);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getBytes method, of class ByteArray.
-     */
-    @Test
-    public void testGetBytes() {
-        System.out.println("getBytes");
-        ByteArray instance = new ByteArray();
-        byte[] expResult = null;
-        byte[] result = instance.getBytes();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getCapacity method, of class ByteArray.
-     */
-    @Test
-    public void testGetCapacity() {
-        System.out.println("getCapacity");
-        ByteArray instance = new ByteArray();
-        int expResult = 0;
-        int result = instance.getCapacity();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of length method, of class ByteArray.
-     */
-    @Test
-    public void testLength() {
-        System.out.println("length");
-        ByteArray instance = new ByteArray();
-        int expResult = 0;
-        int result = instance.length();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
      * Test of hashCode method, of class ByteArray.
      */
     @Test
