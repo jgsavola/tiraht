@@ -23,6 +23,11 @@ public class ByteArray {
             this.byteArray = byteArray;
         }
 
+        public ByteArrayIterator(ByteArray byteArray, int position) {
+            this.position = position;
+            this.byteArray = byteArray;
+        }
+
         @Override
         public boolean hasNext() {
             return position < byteArray.length();
@@ -128,6 +133,10 @@ public class ByteArray {
     }
 
     public ByteArrayIterator iterator() {
-        return new ByteArrayIterator(this);
+        return new ByteArrayIterator(this, 0);
+    }
+
+    public ByteArrayIterator iterator(int position) {
+        return new ByteArrayIterator(this, position);
     }
 }
