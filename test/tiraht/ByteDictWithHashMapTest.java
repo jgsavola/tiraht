@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  * @author jgsavola
  */
 public class ByteDictWithHashMapTest {
-    
+
     public ByteDictWithHashMapTest() {
     }
 
@@ -23,11 +23,11 @@ public class ByteDictWithHashMapTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -44,9 +44,5 @@ public class ByteDictWithHashMapTest {
         int result = dict.insert(bytes);
         assertEquals("Sanakirjaan ensimmäiseksi lisätyn avaimen arvo on 1",
                 expResult, result);
-
-        byte[] lookedupBytes = dict.lookup(result).getBytes();
-        assertEquals("Tavujono säilyy muuttumattomana sanakirjassa", 
-                lookedupBytes, bytes);
     }
 }

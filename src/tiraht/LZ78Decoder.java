@@ -1,7 +1,7 @@
 package tiraht;
 
 import java.util.ArrayList;
-import java.lang.StringBuilder;
+import java.util.HashMap;
 
 /**
  *
@@ -9,37 +9,29 @@ import java.lang.StringBuilder;
  */
 public class LZ78Decoder {
     StringDict dict;
+    HashMap<Integer, String> reverseMap;
 
     public LZ78Decoder(StringDict dict) {
         this.dict = dict;
+        reverseMap = new HashMap<Integer, String>();
+        reverseMap.put(0, "");
     }
 
     public LZ78Decoder() {
-        this.dict = new StringDictWithHashMap(true);
+        this(new StringDictWithHashMap());
     }
 
-//    public String decode(ArrayList<PairToken> tokens) {
-//        String output = "";
-//
-//        for (PairToken token : tokens) {
-//            String key = dict.lookup(token.index);
-//            output += key + token.c;
-//            dict.insert(key + token.c);
-//        }
-//
-//        return output;
-//    }
-    
     public String decode(ArrayList<PairToken> tokens) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder output = new StringBuilder();
 
         for (PairToken token : tokens) {
-            String key = dict.lookup(token.index);
-            sb.append(key);
-            sb.append(token.c);
-            dict.insert(key + token.c);
+            String key = reverseMap.get(token.index);
+            output.append(key);
+            output.append(token.c);
+            int index = dict.insert(key + token.c);
+            reverseMap.put(index, key + token.c);
         }
 
-        return sb.toString();
+        return output.toString();
     }
 }

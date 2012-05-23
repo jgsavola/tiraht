@@ -1,8 +1,7 @@
 package tiraht;
 
 import java.util.ArrayList;
-import java.lang.StringBuilder;
-import java.util.Vector;
+import java.util.HashMap;
 
 /**
  *
@@ -10,39 +9,31 @@ import java.util.Vector;
  */
 public class LZ78ByteDecoder {
     ByteDict dict;
+    HashMap<Integer, ByteArray> reverseMap;
+
+    public LZ78ByteDecoder() {
+        this(new ByteDictWithHashMap());
+    }
 
     public LZ78ByteDecoder(ByteDict dict) {
         this.dict = dict;
+        this.reverseMap = new HashMap<Integer, ByteArray>();
+        this.reverseMap.put(0, new ByteArray());
     }
 
-    public LZ78ByteDecoder() {
-        this.dict = new ByteDictWithHashMap(true);
-    }
-
-//    public String decode(ArrayList<PairToken> tokens) {
-//        String output = "";
-//
-//        for (PairToken token : tokens) {
-//            String key = dict.lookup(token.index);
-//            output += key + token.c;
-//            dict.insert(key + token.c);
-//        }
-//
-//        return output;
-//    }
-    
     public byte[] decode(ArrayList<Pair<Integer, Byte>> tokens) {
         ByteArray output = new ByteArray();
 
         for (Pair<Integer, Byte> token : tokens) {
-            ByteArray key = dict.lookup(token.first);
+            ByteArray key = reverseMap.get(token.first);
             for (byte b : key.getBytes())
                 output.add(b);
             output.add(token.second);
 
             ByteArray keybb = new ByteArray(key.getBytes(), key.length() + 1);
             keybb.add(token.second);
-            dict.insert(keybb);
+            int index = dict.insert(keybb);
+            reverseMap.put(index, keybb);
         }
 
         return output.getBytes();
