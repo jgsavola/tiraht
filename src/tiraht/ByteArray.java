@@ -22,6 +22,21 @@ public class ByteArray {
         bytes = new byte[capacity];
     }
 
+    public ByteArray(byte[] bytes) {
+        this.capacity = bytes.length;
+        this.length = bytes.length;
+        this.bytes = bytes;
+    }
+
+    public ByteArray(byte[] bytes, int capacity) {
+        if (capacity < bytes.length)
+            throw new ArrayIndexOutOfBoundsException("ByteArray: capacity < bytes.length");
+
+        this.capacity = capacity;
+        this.length = bytes.length;
+        this.bytes = Arrays.copyOf(bytes, capacity);
+    }
+
     public void add(byte b) {
         if (length == capacity)
             grow();
@@ -29,12 +44,23 @@ public class ByteArray {
     }
 
     private void grow() {
-        capacity = capacity*2;
+        if (capacity < 4)
+            capacity = 4;
+        else
+            capacity = capacity*2;
         bytes = Arrays.copyOf(bytes, capacity);
     }
 
     public byte[] getBytes() {
-        return bytes;
+        /*
+         * Palauta kopio tavutaulukosta, jos taulukko ei ole täynnä.
+         * (Tämä voi olla epäviisasta: käyttäjän käytännössä oletettava,
+         * että taulukko on jaettu, kun parempaakaan tietoa ei ole.)
+         */
+        if (length == capacity)
+            return bytes;
+        else
+            return Arrays.copyOf(bytes, length);
     }
 
     public int getCapacity() {
