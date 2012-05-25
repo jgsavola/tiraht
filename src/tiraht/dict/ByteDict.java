@@ -1,4 +1,6 @@
-package tiraht;
+package tiraht.dict;
+
+import tiraht.util.ByteArray;
 
 /**
  * Sanakirjarajapinta <code>byte[]</code>-muotoisille tavujonoille.

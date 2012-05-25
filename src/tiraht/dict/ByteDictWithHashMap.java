@@ -1,5 +1,6 @@
-package tiraht;
+package tiraht.dict;
 
+import tiraht.util.ByteArray;
 import java.util.HashMap;
 
 /**

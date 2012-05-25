@@ -1,4 +1,4 @@
-package tiraht;
+package tiraht.util;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;

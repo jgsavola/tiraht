@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package tiraht;
+package tiraht.util;
 
+import tiraht.util.ByteArray;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import org.junit.After;

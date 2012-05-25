@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package tiraht;
+package tiraht.dict;
 
+import tiraht.dict.ByteTrie;
+import tiraht.util.ByteArray;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.After;
