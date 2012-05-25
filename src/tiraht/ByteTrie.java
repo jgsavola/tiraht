@@ -53,6 +53,18 @@ public class ByteTrie<E> implements Trie {
         insert(key.listIterator(), value);
     }
 
+    public void insert(Byte key, E value) {
+        ByteTrie<E> child = findChild(key);
+        if (child == null) {
+            child = new ByteTrie<E>(key);
+            addChild(child);
+        } else {
+            child.nodeKey = key;
+        }
+        child.isValid = true;
+        child.value = value;
+    }
+
 //    private ByteTrie<E> findChild(Byte b) {
 //        for (ByteTrie<E> child : children)
 //            if (child.nodeKey == b)
@@ -105,5 +117,9 @@ public class ByteTrie<E> implements Trie {
             return null;
 
         return child.retrieve(key);
+    }
+
+    public ByteTrie<E> retrieve(Byte key) {
+        return findChild(key);
     }
 }
