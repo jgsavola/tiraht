@@ -237,3 +237,40 @@ pakkaus(/usr/bin/emacs): symboleita=10819480, koodeja=1127696 (300792/s), aika=3
 purku(/usr/bin/emacs)  : symboleita=10819480, aika=982.037569ms, muisti=128227280
 7.44user 2.15system 0:08.32elapsed 115%CPU (0avgtext+0avgdata 2352320maxresident)k
 0inputs+0outputs (0major+192644minor)pagefaults 0swaps
+
+9 (BK107-koneella):
+Tavuilla (trie):
+pakkaus(testdata/canterbury/alice29.txt): symboleita=152089, koodeja=29091 (316274/s), aika=91.980303ms, muisti=5029432
+purku(testdata/canterbury/alice29.txt)  : symboleita=152089, aika=50.199484ms, muisti=3218712
+pakkaus(testdata/IP-Masquerade-HOWTO): symboleita=708351, koodeja=80214 (317013/s), aika=253.03051ms, muisti=13841024
+purku(testdata/IP-Masquerade-HOWTO)  : symboleita=708351, aika=19.719461ms, muisti=5891008
+pakkaus(testdata/dpkg.status): symboleita=2326872, koodeja=284443 (314508/s), aika=904.404983ms, muisti=49109592
+purku(testdata/dpkg.status)  : symboleita=2326872, aika=69.562409ms, muisti=32503304
+pakkaus(testdata/zero): symboleita=1000000, koodeja=1414 (4621/s), aika=305.958369ms, muisti=239632
+purku(testdata/zero)  : symboleita=1000000, aika=1.237181ms, muisti=2135608
+pakkaus(testdata/emacs): symboleita=10819544, koodeja=1129636 (249685/s), aika=4524.24254ms, muisti=193214744
+purku(testdata/emacs)  : symboleita=10819544, aika=854.114761ms, muisti=145651496
+
+10 (LZ78Token + LZ78Compressor):
+
+jgsavola@dhp-45:~/tiraht$ java -jar dist/tiraht.jar testdata/canterbury/alice29.txt testdata/IP-Masquerade-HOWTO testdata/dpkg.status testdata/zero testdata/emacs
+Tavuilla (trie):
+pakkaus(testdata/canterbury/alice29.txt): symboleita=152089, koodeja=29091 (323428/s), aika=89.945723ms, muisti=4587392
+pakkaus(testdata/IP-Masquerade-HOWTO): symboleita=708351, koodeja=80214 (316667/s), aika=253.306423ms, muisti=12488464
+pakkaus(testdata/dpkg.status): symboleita=2326872, koodeja=284443 (315234/s), aika=902.322148ms, muisti=44604008
+pakkaus(testdata/zero): symboleita=1000000, koodeja=1414 (4632/s), aika=305.208753ms, muisti=219048
+pakkaus(testdata/emacs): symboleita=10819544, koodeja=1129636 (252953/s), aika=4465.79317ms, muisti=177515496
+
+11 (HashMapDecompressor + ByteArrayOutputStream):
+
+Tavuilla (trie):
+pakkaus(testdata/canterbury/alice29.txt): symboleita=152089, koodeja=29091 (305368/s), aika=95.26529ms, muisti=4587392
+purku(testdata/canterbury/alice29.txt)  : symboleita=152089, aika=58.019896ms, muisti=3480984
+pakkaus(testdata/IP-Masquerade-HOWTO): symboleita=708351, koodeja=80214 (311564/s), aika=257.455244ms, muisti=12587320
+purku(testdata/IP-Masquerade-HOWTO)  : symboleita=708351, aika=19.39721ms, muisti=10208992
+pakkaus(testdata/dpkg.status): symboleita=2326872, koodeja=284443 (296418/s), aika=959.597843ms, muisti=44604008
+purku(testdata/dpkg.status)  : symboleita=2326872, aika=74.863672ms, muisti=36711544
+pakkaus(testdata/zero): symboleita=1000000, koodeja=1414 (4502/s), aika=314.069055ms, muisti=219176
+purku(testdata/zero)  : symboleita=1000000, aika=1.632641ms, muisti=3184272
+pakkaus(testdata/emacs): symboleita=10819544, koodeja=1129636 (249705/s), aika=4523.86498ms, muisti=174331096
+purku(testdata/emacs)  : symboleita=10819544, aika=757.027728ms, muisti=162562832
