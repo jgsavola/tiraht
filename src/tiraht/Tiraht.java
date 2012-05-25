@@ -122,7 +122,7 @@ public class Tiraht {
                 Runtime.getRuntime().gc();
                 startMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
                 startTime = System.nanoTime();
-                LZ78ByteDecoder decoder = new LZ78ByteDecoder();
+                LZ78ByteTrieDecoder decoder = new LZ78ByteTrieDecoder();
                 byte[] decodedBytes = decoder.decode(tokens);
                 stopTime = System.nanoTime();
                 Runtime.getRuntime().gc();
