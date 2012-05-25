@@ -78,11 +78,26 @@ public class ByteArray {
         bytes[length++] = b;
     }
 
+    public void add(ByteArray ba) {
+        if (length + ba.length() >= capacity) {
+            grow(length + ba.length());
+        }
+        System.arraycopy(ba.bytes, 0, bytes, length, ba.length());
+        length += ba.length();
+    }
+
     private void grow() {
-        if (capacity < 4)
-            capacity = 4;
-        else
-            capacity = capacity*2;
+        grow(this.length() + 1);
+    }
+
+    private void grow(int newSize) {
+        while (newSize >= capacity) {
+            if (capacity < 4)
+                capacity = 4;
+            else
+                capacity = capacity*2;
+        }
+
         bytes = Arrays.copyOf(bytes, capacity);
     }
 
