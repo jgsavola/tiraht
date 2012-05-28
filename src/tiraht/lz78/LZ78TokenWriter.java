@@ -1,5 +1,7 @@
 package tiraht.lz78;
 
+import java.io.IOException;
+
 /**
  * Rajapinta <code>LZ78Token</code>-muotoisten kohteiden kirjoittamiseen.
  *
@@ -11,5 +13,5 @@ public interface LZ78TokenWriter {
      *
      * @param token Kirjoitettava kohde.
      */
-    public void writeLZ78Token(LZ78Token token);
+    public void writeLZ78Token(LZ78Token token) throws IOException;
 }
