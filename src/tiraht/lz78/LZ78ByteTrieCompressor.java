@@ -21,15 +21,23 @@ public class LZ78ByteTrieCompressor implements LZ78Compressor {
     private int tokensWritten;
     private int maxTokenIndex;
 
-    public LZ78ByteTrieCompressor(ByteTrie trie) {
-        this.trie = trie;
-        symbolsRead = 0;
-        tokensWritten = 0;
-        maxTokenIndex = 0;
-    }
+    public enum DictFillUpStrategy {
+        DoNothing,
+        Freeze,
+        Reset
+    };
+
+    private DictFillUpStrategy fillUpStrategy;
+    private int dictSizeLimit;
 
     public LZ78ByteTrieCompressor() {
-        this(new ByteTrie());
+        this(-1, DictFillUpStrategy.DoNothing);
+    }
+
+    public LZ78ByteTrieCompressor(int dictSizeLimit, DictFillUpStrategy fillUpStrategy) {
+        trie = new ByteTrie();
+        this.dictSizeLimit = dictSizeLimit;
+        this.fillUpStrategy = fillUpStrategy;
     }
 
     public void compress(byte[] source, LZ78TokenWriter writer) throws IOException {
@@ -42,6 +50,16 @@ public class LZ78ByteTrieCompressor implements LZ78Compressor {
         int symbol;
         while ((symbol = is.read()) != -1) {
             symbolsRead++;
+
+            if (dictSizeLimit != -1) {
+                if (maxTokenIndex == dictSizeLimit) {
+                    if (fillUpStrategy == DictFillUpStrategy.Freeze) {
+                        trie = new ByteTrie();
+                        maxTokenIndex = 0;
+                    }
+                }
+            }
+
             ByteTrie<Integer> bt;
             ByteTrie<Integer> lastbt = trie;
             int lastToken = 0;
@@ -59,7 +77,8 @@ public class LZ78ByteTrieCompressor implements LZ78Compressor {
             /**
              * Avainta ei löytynyt sanakirjasta.
              */
-            lastbt.insert((byte)symbol, ++maxTokenIndex);
+            if (dictSizeLimit == -1 || maxTokenIndex < dictSizeLimit)
+                lastbt.insert((byte)symbol, ++maxTokenIndex);
             writer.writeLZ78Token(new LZ78Token(lastToken, (byte)symbol));
             tokensWritten++;
         }
