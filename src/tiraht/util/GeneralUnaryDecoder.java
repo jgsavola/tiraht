@@ -38,7 +38,7 @@ public class GeneralUnaryDecoder {
      * @return Purettu kokonaisluku.
      * @throws IOException
      */
-    int decode() throws IOException {
+    public int decode() throws IOException {
         int bits;
         int offset = 0;
 
