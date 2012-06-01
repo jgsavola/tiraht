@@ -3,6 +3,7 @@ package tiraht.lz78;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import tiraht.lz78.LZ78ByteTrieCompressor.DictFillUpStrategy;
 import tiraht.util.ByteArray;
 
 /**
@@ -11,12 +12,23 @@ import tiraht.util.ByteArray;
  * @author jgsavola
  */
 public class LZ78HashMapDecompressor implements LZ78Decompressor {
-    HashMap<Integer, ByteArray> reverseMap;
+    private HashMap<Integer, ByteArray> reverseMap;
+    private DictFillUpStrategy dictFillUpStrategy;
+    private int dictSize;
 
     /**
      * Luo uusi <code>LZ78HashMapDecompressor</code>.
      */
     public LZ78HashMapDecompressor() {
+        this(-1, DictFillUpStrategy.DoNothing);
+    }
+
+    public LZ78HashMapDecompressor(int dictSize, DictFillUpStrategy dictFillUpStrategy) {
+        this.dictSize = dictSize;
+        this.dictFillUpStrategy = dictFillUpStrategy;
+        if (dictSize != -1 || dictFillUpStrategy != DictFillUpStrategy.DoNothing)
+            throw new UnsupportedOperationException("Vain sanakirjastrategia DoNothing toteutettu (sanakirjan max koko -1).");
+
         this.reverseMap = new HashMap<Integer, ByteArray>();
         this.reverseMap.put(0, new ByteArray());
     }
