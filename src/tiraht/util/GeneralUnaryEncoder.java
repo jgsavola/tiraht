@@ -13,7 +13,7 @@ public class GeneralUnaryEncoder {
     private int start;
     private int step;
     private int stop;
-    private long numDifferentCodes;
+    private long numberOfDifferentCodes;
 
     private BitOutputStream bs;
 
@@ -47,7 +47,16 @@ public class GeneralUnaryEncoder {
         this.step = step;
         this.stop = stop;
 
-        numDifferentCodes = ((1L << (stop+step)) - (1L << start)) / ((1L << step) - 1L);
+        numberOfDifferentCodes = ((1L << (stop+step)) - (1L << start)) / ((1L << step) - 1L);
+    }
+
+    /**
+     * Anna koodaajan tukemien erilaisten koodien lukumäärä.
+     *
+     * @return Koodien lukumäärä.
+     */
+    public long getNumberOfDifferentCodes() {
+        return numberOfDifferentCodes;
     }
 
     /**
@@ -87,8 +96,8 @@ public class GeneralUnaryEncoder {
         int a;
         int offset = 0;
 
-        if (num < 0 || num >= numDifferentCodes)
-            throw new IllegalArgumentException("" + num + " >= " + numDifferentCodes);
+        if (num < 0 || num >= numberOfDifferentCodes)
+            throw new IllegalArgumentException("" + num + " >= " + numberOfDifferentCodes);
 
         /**
          * Selvitetään iteratiivisesti, minkä kertaluokan lukua ollaan
