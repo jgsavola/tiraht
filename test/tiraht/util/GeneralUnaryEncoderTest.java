@@ -42,7 +42,7 @@ public class GeneralUnaryEncoderTest {
 
         {
             /**
-             * (4, 1, 4): 01111(000)
+             * (4, 1, 4): 1111(0000)
              */
             byte[] expected = {(byte)(0xf << 4)};
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -55,7 +55,7 @@ public class GeneralUnaryEncoderTest {
 
         {
             /**
-             * (4, 1, 5): 1111(0000)
+             * (4, 1, 5): 01111(000)
              */
             byte[] expected = {(byte)(0xf << 3)};
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
