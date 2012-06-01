@@ -16,6 +16,7 @@ import tiraht.util.GeneralUnaryEncoder;
 public class LZ78GeneralUnaryEncoder implements LZ78TokenWriter {
     private GeneralUnaryEncoder unaryEncoder;
     private BitStream bs;
+    private OutputStream os;
 
     /**
      * Luo "General Unary" -kooderi.
@@ -37,8 +38,23 @@ public class LZ78GeneralUnaryEncoder implements LZ78TokenWriter {
      * @param stop Pisimmän bittijonon pituus
      */
     public LZ78GeneralUnaryEncoder(OutputStream os, int start, int step, int stop) {
+        this.os = os;
         this.bs = new BitStream(os);
         unaryEncoder = new GeneralUnaryEncoder(bs, start, step, stop);
+    }
+
+    /**
+     * Kirjoita otsake, jossa on kooderin parametrit.
+     *
+     * Tämän metodin käyttäminen ei ole pakollista.
+     *
+     * FIXME: onko otsakkeen kirjoittaminen parempi tehdä tässä vai
+     * <code>GeneralUnaryEncoder</code>-luokan sisällä?
+     */
+    public void writeHeader() throws IOException {
+        os.write(unaryEncoder.getStart());
+        os.write(unaryEncoder.getStep());
+        os.write(unaryEncoder.getStop());
     }
 
     @Override
