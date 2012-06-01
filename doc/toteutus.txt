@@ -1,0 +1,91 @@
+LZ78-algoritmin toteutus
+========================
+
+Pakkausalgoritmi
+----------------
+
+Algoritmin toteutus on edennyt vaiheittain. Ensimmäisessä vaiheessa
+toteutin LZ78-koodaus- ja dekoodausalgoritmit merkkijonomuotoiselle
+datalle. Sanakirjan tietorakenteena käytin Javan HashMap-rakennetta.
+Algoritmin nopeudelle kriittiseksi osoittautui merkkijonojen
+käsittely: kohtuullisen nopeuden saavuttamiseksi merkkijonojen
+konkatenaatio piti korvata StringBuffer-luokan avulla.
+
+Toisessa vaiheessa toteutin algoritmin tavumuotoiselle datalle. Odotin
+suorituskyvyn paranevan, mutta ongelmaksi muodostui vaihtuvamittaisten
+tavupuskurien toteuttaminen. Tätä varten tein ByteArray-luokan, joka
+kasvattaa automaattisesti tavupuskuria. Ongelmaksi muodostui
+hajautusfunktion toteuttaminen tavupuskurille, jonka lopussa saattaa
+olla mielivaltainen määrä käyttämätöntä tilaa. Tämän ratkaisemiseen
+käytin java.nio.ByteBuffer-luokkaa, jolla on mahdollista luoda useita
+erilaisia näkymiä samaan fyysiseen muistialueeseen.
+
+Näillä menetelmillä tavupohjaisen algoritmin suorituskyky kasvoi
+samaan suuruusluokkaan kuin merkkijonoilla.
+
+Kolmannessa vaiheessa korvasin koodauksessa käytetyn HashMap-rakenteen
+uudella ByteTrie-rakenteella. ByteTrie käyttää avaimina
+ByteArray-olioita ja arvoina kokonaislukuja. Koska Javassa ei voi
+vapaasti tehdä osoittimia taulukkoon, osoittautui käytännölliseksi
+käyttää listaiteraattoria avaimen tavujen iteraatioon. Ensimmäisessä
+versiossa jokainen haku tehtiin Trien juuresta lähtien metodilla:
+
+  int search(Iterator<Byte> key)
+
+Tämä näkyi profiloinnissa syvänä rekursiona (avaimen pituuden mukaan,
+suuruusluokka saattoi olla sadoissa tavuissa). Suorituskyky parani
+huomattavasti, kun lisäsin uuden metodin
+
+  ByteTrie retrieve(byte key)
+
+Koska avainta haetaan iteratiivisesti kasvattaen avainta loppupäästä,
+voidaan hakua jatkaa siitä ByteTrien haarasta, johon edellinen haku
+päättyi. Tämä osoittautui korjasi pahimman suorituskykyongelman.
+
+Luokkarakenne
+-------------
+
+Kokeilujen myötä syntyi luokkarakenne, jossa ideana on käyttää
+tulostus- ja syötevirtarajapintoja. Datavirta kulkee seuraavasti:
+
+Kompressointi:
+
+<lähtötiedosto>
+  ==> InputStream 
+    ==> LZ78Compressor 
+      ==> LZ78TokenWriter 
+        ==> OutputStream
+          <pakattu tulostiedosto>
+
+Dekompressointi:
+
+<pakattu lähtötiedosto>
+  ==> InputStream 
+    ==> LZ78TokenWriter 
+      ==> LZ78Decompressor 
+        ==> OutputStream
+          <purettu tulostiedosto>
+
+Toteutettuja rajapintoja:
+
+LZ78Compressor
+  |
+  -- LZ78ByteTrieCompressor (Kompressointi ByteTrie-rakenteen avulla.)
+
+LZ78TokenWriter
+  |
+  -- LZ78ToArrayListEncoder (Tulostus: ArrayList<LZ78Token>-rakenne.)
+  |
+  -- LZ78GeneralUnaryEncoder (Koodaus "General Unary"-menetelmällä,
+                              kirjoitetaan tulostusvirtaan.)
+
+LZ78Decompressor
+  |
+  -- LZ78HashMapDecompressor (Dekompressointi HashMap-rakenteen avulla.)
+
+LZ78TokenReader
+  |
+  -- LZ78FromArrayListEncoder (Luetaan ArrayList<LZ78Token>-rakenteesta.)
+  |
+  -- LZ78GeneralUnaryDecoder (Luetaan "General Unary"-menetelmällä
+                              koodattua bittivirtaa.)
