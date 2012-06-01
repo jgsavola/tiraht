@@ -1,14 +1,19 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package tiraht.util;
 
+import java.io.ByteArrayOutputStream;
+import static org.junit.Assert.assertArrayEquals;
 import org.junit.*;
-import static org.junit.Assert.*;
 
 /**
+ * Testaa "General Unary"-koodausta.
  *
  * @author jgsavola
  */
 public class GeneralUnaryEncoderTest {
-    
     public GeneralUnaryEncoderTest() {
     }
 
@@ -19,11 +24,11 @@ public class GeneralUnaryEncoderTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -32,22 +37,33 @@ public class GeneralUnaryEncoderTest {
      * Test of encode method, of class GeneralUnaryEncoder.
      */
     @Test
-    public void testEncode() {
+    public void testEncode() throws Exception {
         System.out.println("encode");
 
-        int start = 3;
-        int step  = 2;
-        int stop  = 9;
-        int numCodes = 680;
-        GeneralUnaryEncoder encoder = new GeneralUnaryEncoder(start, step, stop);
-        
-        assertEquals("0|000", encoder.encode(0));
-        assertEquals("0|111", encoder.encode(7));
-        assertEquals("10|00000", encoder.encode(8));
-        assertEquals("111|111111111", encoder.encode(679));
-        for (int i = 0; i < numCodes; i++) {
-            String result = encoder.encode(i);
-            System.out.printf("%6d %s\n", i, result);
+        {
+            /**
+             * (4, 1, 4): 01111(000)
+             */
+            byte[] expected = {(byte)(0xf << 4)};
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            BitStream bs = new BitStream(bos);
+            GeneralUnaryEncoder encoder = new GeneralUnaryEncoder(bs, 4, 1, 4);
+            encoder.encode(0xf);
+            bs.flush();
+            assertArrayEquals("Bittikoodaus(4, 1, 4) toimii.", expected, bos.toByteArray());
+        }
+
+        {
+            /**
+             * (4, 1, 5): 1111(0000)
+             */
+            byte[] expected = {(byte)(0xf << 3)};
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            BitStream bs = new BitStream(bos);
+            GeneralUnaryEncoder encoder = new GeneralUnaryEncoder(bs, 4, 1, 5);
+            encoder.encode(0xf);
+            bs.flush();
+            assertArrayEquals("Bittikoodaus(4, 1, 5) toimii.", expected, bos.toByteArray());
         }
     }
 }
