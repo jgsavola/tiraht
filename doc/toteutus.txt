@@ -1,11 +1,12 @@
 LZ78-algoritmin toteutus
 ========================
 
+
 Pakkausalgoritmi
 ----------------
 
-Algoritmin toteutus on edennyt vaiheittain. Ensimmäisessä vaiheessa
-toteutin LZ78-koodaus- ja dekoodausalgoritmit merkkijonomuotoiselle
+Projektin toteutus on edennyt vaiheittain. Ensimmäisessä vaiheessa
+toteutin LZ78-pakkaus- ja purkualgoritmit merkkijonomuotoiselle
 datalle. Sanakirjan tietorakenteena käytin Javan HashMap-rakennetta.
 Algoritmin nopeudelle kriittiseksi osoittautui merkkijonojen
 käsittely: kohtuullisen nopeuden saavuttamiseksi merkkijonojen
@@ -40,7 +41,36 @@ huomattavasti, kun lisäsin uuden metodin
 
 Koska avainta haetaan iteratiivisesti kasvattaen avainta loppupäästä,
 voidaan hakua jatkaa siitä ByteTrien haarasta, johon edellinen haku
-päättyi. Tämä osoittautui korjasi pahimman suorituskykyongelman.
+päättyi. Tämä korjasi pahimman suorituskykyongelman.
+
+
+Kompressoidun datan koodaus
+---------------------------
+
+Jotta kompressiosta tavuvirraksi (tiedostoon) olisi tilahyötyä, täytyy
+LZ78-pakkaajan tuottamat (etuliiteindeksi, jälkiliitetavu)-parit
+koodata tiiviisti. Tähän kelpaa esimerkiksi etuliitekoodi, joista
+yksinkertaisimmasta päästä lienee "General Unary"-koodi, joka
+esitellään David Solomonin kirjasta "Data Compression. The Complete
+Reference".
+
+Luokat GeneralUnaryEncoder ja GeneralUnaryDecoder toteuttavat "General
+Unary"-algoritmin. Koodaaminen tehdään biteittäin, joten tarvitaan
+jokin keino kirjoittaa yksittäisiä bittejä. Tätä tarkoitusta varten on
+toteutettu yksinkertaiset BitOutputStream ja BitInputStream-luokat.
+Nämä luokat käyttävät yhden tavun puskuria lukemiseen ja
+kirjoittamiseen.
+
+Käytetyssä etuliitekoodauksessa on kolme parametria: start on
+lyhyimmän koodin bittimäärä, step on koodin pituuden kasvatukseen
+bittimäärä ja stop on pisimmän koodin bittimäärä. Optimaaliset
+parametrit riippuvat koodattavien lukujen jakaumasta. Parilla
+testiaineistolla tehtyjen kokeilujen perusteella LZ78 tuottamien
+koodien todennäköisyys näyttää pienenenevän logaritmisesti
+etuliiteindeksin funktiona (ks. histogrammi_alice.png ja
+histogrammi_emacs.png). Hyvät parametrit testitiedostojen koodaukseen
+löytyi kokeilemalla.
+
 
 Luokkarakenne
 -------------
@@ -51,20 +81,22 @@ tulostus- ja syötevirtarajapintoja. Datavirta kulkee seuraavasti:
 Kompressointi:
 
 <lähtötiedosto>
-  ==> InputStream 
-    ==> LZ78Compressor 
-      ==> LZ78TokenWriter 
-        ==> OutputStream
-          <pakattu tulostiedosto>
+  ==> InputStream
+    ==> LZ78Compressor
+      ==> LZ78TokenWriter
+       (==> BitOutputStream)
+          ==> OutputStream
+            <pakattu tulostiedosto>
 
 Dekompressointi:
 
 <pakattu lähtötiedosto>
-  ==> InputStream 
-    ==> LZ78TokenWriter 
-      ==> LZ78Decompressor 
-        ==> OutputStream
-          <purettu tulostiedosto>
+  ==> InputStream
+   (==> BitInputStream)
+      ==> LZ78TokenReader
+        ==> LZ78Decompressor
+          ==> OutputStream
+            <purettu tulostiedosto>
 
 Toteutettuja rajapintoja:
 
@@ -85,7 +117,7 @@ LZ78Decompressor
 
 LZ78TokenReader
   |
-  -- LZ78FromArrayListEncoder (Luetaan ArrayList<LZ78Token>-rakenteesta.)
+  -- LZ78FromArrayListDecoder (Luetaan ArrayList<LZ78Token>-rakenteesta.)
   |
   -- LZ78GeneralUnaryDecoder (Luetaan "General Unary"-menetelmällä
                               koodattua bittivirtaa.)
