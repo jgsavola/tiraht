@@ -45,6 +45,11 @@ public class Tiraht {
                 LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(16384, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
                 LZ78GeneralUnaryEncoder encoder = new LZ78GeneralUnaryEncoder(System.out, start, step, stop);
                 compressor.compress(reader, encoder);
+
+                /**
+                 * Puskurin tyhjentämistä ei saa unohtaa!
+                 */
+                encoder.flush();
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
