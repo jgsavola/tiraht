@@ -41,4 +41,11 @@ public class LZ78ToArrayListEncoder implements LZ78TokenWriter {
     public void writeLZ78Token(LZ78Token token) {
         tokens.add(token);
     }
+
+    @Override
+    public void flush() {
+        /**
+         * Ei tarvetta tyhjentää puskureita.
+         */
+    }
 }
