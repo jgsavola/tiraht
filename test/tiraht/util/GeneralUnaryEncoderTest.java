@@ -46,7 +46,7 @@ public class GeneralUnaryEncoderTest {
              */
             byte[] expected = {(byte)(0xf << 4)};
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            BitStream bs = new BitStream(bos);
+            BitOutputStream bs = new BitOutputStream(bos);
             GeneralUnaryEncoder encoder = new GeneralUnaryEncoder(bs, 4, 1, 4);
             encoder.encode(0xf);
             bs.flush();
@@ -59,7 +59,7 @@ public class GeneralUnaryEncoderTest {
              */
             byte[] expected = {(byte)(0xf << 3)};
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            BitStream bs = new BitStream(bos);
+            BitOutputStream bs = new BitOutputStream(bos);
             GeneralUnaryEncoder encoder = new GeneralUnaryEncoder(bs, 4, 1, 5);
             encoder.encode(0xf);
             bs.flush();

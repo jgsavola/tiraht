@@ -2,7 +2,7 @@ package tiraht.lz78;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import tiraht.util.BitStream;
+import tiraht.util.BitOutputStream;
 import tiraht.util.GeneralUnaryEncoder;
 
 /**
@@ -15,7 +15,7 @@ import tiraht.util.GeneralUnaryEncoder;
  */
 public class LZ78GeneralUnaryEncoder implements LZ78TokenWriter {
     private GeneralUnaryEncoder unaryEncoder;
-    private BitStream bs;
+    private BitOutputStream bs;
     private OutputStream os;
 
     /**
@@ -30,7 +30,7 @@ public class LZ78GeneralUnaryEncoder implements LZ78TokenWriter {
      * </pre>
      *
      * Luokka kirjoittaa koodatut kokonaisluvut suoraan annettuun
-     * tulostusvirtaan käyttäen <code>BitStream</code>-luokkaa.
+     * tulostusvirtaan käyttäen <code>BitOutputStream</code>-luokkaa.
      *
      * @param os Tulostusvirta, johon koodi kirjoitetaan.
      * @param start Lyhimmän bittijonon pituus.
@@ -39,7 +39,7 @@ public class LZ78GeneralUnaryEncoder implements LZ78TokenWriter {
      */
     public LZ78GeneralUnaryEncoder(OutputStream os, int start, int step, int stop) {
         this.os = os;
-        this.bs = new BitStream(os);
+        this.bs = new BitOutputStream(os);
         unaryEncoder = new GeneralUnaryEncoder(bs, start, step, stop);
     }
 
