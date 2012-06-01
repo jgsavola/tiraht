@@ -62,7 +62,7 @@ public class GeneralUnaryEncoder {
     /**
      * Anna <code>start</code>-arvo.
      *
-     * @return
+     * @return <code>start</code>-arvo.
      */
     public int getStart() {
         return start;
@@ -71,7 +71,7 @@ public class GeneralUnaryEncoder {
     /**
      * Anna <code>step</code>-arvo.
      *
-     * @return
+     * @return <code>step</code>-arvo.
      */
     public int getStep() {
         return step;
@@ -80,7 +80,7 @@ public class GeneralUnaryEncoder {
     /**
      * Anna <code>stop</code>-arvo.
      *
-     * @return
+     * @return <code>stop</code>-arvo.
      */
     public int getStop() {
         return stop;
