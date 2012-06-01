@@ -1,6 +1,11 @@
 package tiraht.util;
 
+import java.io.IOException;
+
 /**
+ * Koodaa kokonaislukuja "General Unary" -koodilla.
+ *
+ * Lähde: Salomon, David: Data Compression. The Complete Reference, 2007.
  *
  * @author jgsavola
  */
@@ -8,57 +13,108 @@ public class GeneralUnaryEncoder {
     private int start;
     private int step;
     private int stop;
+    private long numDifferentCodes;
 
-    public GeneralUnaryEncoder(int start, int step, int stop) {
+    private BitStream bs;
+
+    /**
+     * Luo "General Unary" -kooderi.
+     *
+     * Parametrit <code>start</code>, <code>step</code>, <code>stop</code>
+     * kannattaa valita koodattavien lukujen jakauman mukaan. Erilaisten
+     * koodien määrä saadaan kaavasta
+     *
+     * <pre>
+     *   (2^(stop+step) - 2^start) / (2^step - 1).
+     * </pre>
+     *
+     * Luokka kirjoittaa koodatut kokonaisluvut suoraan annettuun
+     * bittivirtaan.
+     *
+     * @param bs Bittivirta, johon koodi kirjoitetaan.
+     * @param start Lyhimmän bittijonon pituus.
+     * @param step Bittien määrä, jolla bittijonon pituutta kasvatetaan.
+     * @param stop Pisimmän bittijonon pituus
+     */
+    public GeneralUnaryEncoder(BitStream bs, int start, int step, int stop) {
+        if (stop < start)
+            throw new IllegalArgumentException("stop < start");
+        if (stop <= 0 || step <= 0 || stop <= 0)
+            throw new IllegalArgumentException("stop <= 0 || step <= 0 || stop <= 0");
+
+        this.bs = bs;
         this.start = start;
         this.step = step;
         this.stop = stop;
+
+        numDifferentCodes = ((1L << (stop+step)) - (1L << start)) / ((1L << step) - 1L);
     }
-    
-    public String encode(int num) {
+
+    /**
+     * Koodaa kokonaisluku ja kirjoita se bittivirtaan.
+     *
+     * @param num Koodattava kokonaisluku väliltä [0, numDifferentCodes).
+     * @throws IOException
+     */
+    public void encode(int num) throws IOException {
         int a;
         int offset = 0;
-        
+
+        if (num < 0 || num >= numDifferentCodes)
+            throw new IllegalArgumentException("" + num + " >= " + numDifferentCodes);
+
+        /**
+         * Selvitetään iteratiivisesti, minkä kertaluokan lukua ollaan
+         * koodaamassa.
+         *
+         *   n       kertaluokka (n:s askel).
+         *   a       bittien määrä, joka vaaditaan luvun binääriesitykseen
+         *   offset  aikaisempien kertaluokkien koodaamien lukujen
+         *           (kumulatiivinen) määrä.
+         *
+         * FIXME: tätä kannattaisi optimoida.
+         */
         for (int n = 0; ; n++) {
             a = start + n*step;
-            //System.out.println("a: " + a + ", offset: " + offset);
             if (num < offset + (1 << a)) {
-                return unary(a, n + 1) + "|" + binary(a, num - offset);
+                encodeUnary(a, n + 1);
+                encodeBinary(a, num - offset);
+                return;
             }
             offset += 1 << a;
         }
-
-//        return s;
-//        System.out.printf("num: %06d, a: %2d %28s\n", num, a, unary((a-start) / step + 1) + "|" + binary(a, num));
-////        System.out.println("num: " + num + ", a: " + a + " " + unary((a-start) / step + 1) + "|" + binary(a, num));
-//        
-//        return "";
     }
 
-    private String unary(int bits, int num) {
-        String s = "";
-        
-        for (int n = 0; n < num - 1; n++)
-            s += "1";
+    /**
+     * Koodaa kokonaisluku käyttäen "Unary"-koodausta.
+     *
+     * Huom! tämä poikkeaa normaalista Unary-koodauksesta siten, että
+     * jos ollaan koodaamassa suurimmalla bittimäärällä (<code>stop</code>
+     * bittiä), jätetään päättävä "0" kirjoittamatta.
+     *
+     * @param bits Seuraavaksi koodattavan kokonaisluvun vaatima bittimäärä.
+     * @param n Ollaan koodaamassa kokonaislukua, jonka koko on kertaluokkaa
+     *     <code>n</code>.
+     * @throws IOException
+     */
+    private void encodeUnary(int bits, int n) throws IOException {
+        for (int i = 0; i < n - 1; i++)
+            bs.writeBit(true);
 
         if (bits != stop)
-            s += "0";
-        
-        return s;
+            bs.writeBit(false);
     }
-    
-    private String binary(int bits, int num) {
-        String s = "";
-        
-        while (bits-- > 0) {
-            if ((num & 0x1) != 0)
-                s = "1" + s;
-            else
-                s = "0" + s;
 
-            num = num >> 1;
-        }
-        
-        return s;
+    /**
+     * Koodaa kokonaisluku <code>n</code> käyttäen <code>nBits</code> bittiä
+     * normaalilla binäärikoodauksella.
+     *
+     * @param nBits Tarvittavien bittien määrä.
+     * @param n Koodattava kokonaisluku.
+     * @throws IOException
+     */
+    private void encodeBinary(int nBits, int n) throws IOException {
+        while (nBits-- > 0)
+            bs.writeBit((n & (0x1 << nBits)) != 0);
     }
 }
