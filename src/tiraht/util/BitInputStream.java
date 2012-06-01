@@ -21,7 +21,7 @@ public class BitInputStream {
     /**
      * Luo uusi bittivirta.
      *
-     * @param os Syötevirta, josta bitit luetaan.
+     * @param is Syötevirta, josta bitit luetaan.
      */
     public BitInputStream(InputStream is) {
         this.buffer = 0;
