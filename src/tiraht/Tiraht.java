@@ -80,6 +80,7 @@ public class Tiraht {
                  */
                 LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(dictSize, dictFillUpStrategy);
                 LZ78GeneralUnaryEncoder encoder = new LZ78GeneralUnaryEncoder(System.out, start, step, stop);
+                encoder.writeHeader();
                 compressor.compress(is, encoder);
 
                 /**
