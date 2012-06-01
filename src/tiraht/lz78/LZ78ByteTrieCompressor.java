@@ -53,7 +53,7 @@ public class LZ78ByteTrieCompressor implements LZ78Compressor {
 
             if (dictSizeLimit != -1) {
                 if (maxTokenIndex == dictSizeLimit) {
-                    if (fillUpStrategy == DictFillUpStrategy.Freeze) {
+                    if (fillUpStrategy == DictFillUpStrategy.Reset) {
                         trie = new ByteTrie();
                         maxTokenIndex = 0;
                     }
