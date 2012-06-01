@@ -51,6 +51,33 @@ public class GeneralUnaryEncoder {
     }
 
     /**
+     * Anna <code>start</code>-arvo.
+     *
+     * @return
+     */
+    public int getStart() {
+        return start;
+    }
+
+    /**
+     * Anna <code>step</code>-arvo.
+     *
+     * @return
+     */
+    public int getStep() {
+        return step;
+    }
+
+    /**
+     * Anna <code>stop</code>-arvo.
+     *
+     * @return
+     */
+    public int getStop() {
+        return stop;
+    }
+
+    /**
      * Koodaa kokonaisluku ja kirjoita se bittivirtaan.
      *
      * @param num Koodattava kokonaisluku väliltä [0, numDifferentCodes).
