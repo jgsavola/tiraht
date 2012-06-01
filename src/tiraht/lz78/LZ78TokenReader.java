@@ -1,5 +1,7 @@
 package tiraht.lz78;
 
+import java.io.IOException;
+
 /**
  * <code>LZ7TokenReader</code> lukee ja palauttaa <code>LZ78Token</code>-kohteita.
  *
@@ -11,5 +13,5 @@ public interface LZ78TokenReader {
      *
      * @return <code>LZ78Token</code>-kohde.
      */
-    public LZ78Token readLZ78Token();
+    public LZ78Token readLZ78Token() throws IOException;
 }
