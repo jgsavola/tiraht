@@ -1,26 +1,32 @@
 package tiraht;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import tiraht.lz78.LZ78ByteTrieCompressor;
+import tiraht.lz78.LZ78GeneralUnaryDecoder;
 import tiraht.lz78.LZ78GeneralUnaryEncoder;
+import tiraht.lz78.LZ78HashMapDecompressor;
 
 public class Tiraht {
+    private enum Mode {
+        Compress,
+        Decompress
+    };
+
+    static Mode mode = Mode.Compress;
+
     /**
      * Käytä pientä sanakirjaa, jotta muistinkäyttö ei olisi liian suuri.
      */
-    static int dictSize = 65536;
+    static int dictSize = -1;
 
     /**
      * Sanakirjan täyttyessä aloita alusta tyhjällä sanakirjalla.
      */
-    static LZ78ByteTrieCompressor.DictFillUpStrategy dictFillUpStrategy = LZ78ByteTrieCompressor.DictFillUpStrategy.Reset;
+    static LZ78ByteTrieCompressor.DictFillUpStrategy dictFillUpStrategy = LZ78ByteTrieCompressor.DictFillUpStrategy.DoNothing;
 
     /**
      * Arvot (start=12, step=1) näyttävät tuottavan kohtalaisen tuloksen
@@ -38,7 +44,10 @@ public class Tiraht {
 
     public static void main(String[] args) {
         parseCommandLine(args);
-        testWithByteTrie();
+        if (mode == Mode.Compress)
+            compressFiles();
+        else
+            decompressFiles();
     }
 
     private static void parseCommandLine(String[] args) {
@@ -59,13 +68,15 @@ public class Tiraht {
                 start = Integer.parseInt(args[++i]);
                 step = Integer.parseInt(args[++i]);
                 stop = Integer.parseInt(args[++i]);
+            } else if ("-d".equals(args[i])) {
+                mode = Mode.Decompress;
             } else {
                 inputFilenames.add(args[i]);
             }
         }
     }
 
-    public static void testWithByteTrie() {
+    public static void compressFiles() {
         for (String filename : inputFilenames) {
             try {
                 InputStream is;
@@ -87,6 +98,51 @@ public class Tiraht {
                  * Puskurin tyhjentämistä ei saa unohtaa!
                  */
                 encoder.flush();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public static void decompressFiles() {
+        for (String filename : inputFilenames) {
+            try {
+                InputStream is;
+                if ("-".equals(filename)) {
+                    is = System.in;
+                } else {
+                    is = new FileInputStream(filename);
+                }
+
+                /**
+                 * Dekompressointi
+                 */
+                LZ78HashMapDecompressor decompressor = new LZ78HashMapDecompressor(dictSize, dictFillUpStrategy);
+                LZ78GeneralUnaryDecoder decoder = new LZ78GeneralUnaryDecoder(is);
+
+                try {
+                    decompressor.decompress(decoder, System.out);
+                } catch (EOFException ex) {
+                   /**
+                    * EOFException ei ole virhe. Dataa luetaan niin kauan
+                    * kunnes tiedosto loppuu. Tiedostoon ei ole koodattu
+                    * sen pituutta, joten purkaja ei voi tietää tiedoston
+                    * pituutta.
+                    *
+                    * XXX: tietyissä kohdissa ohjelma osaa odottaa lisädataa,
+                    * jolloin EOF on tietysti virhe. Tämä pitäisi kuitenkin
+                    * huomioida lähempänä virhettä.
+                    */
+
+                   /**
+                    * Huom! Kirjoituspuskurin tyhjentäminen tässä kohdassa
+                    * on kriittistä. Muuten viimeiset tavut voivat jäädä
+                    * kirjoittamatta.
+                    */
+                    System.out.flush();
+                }
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
