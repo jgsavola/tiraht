@@ -12,7 +12,7 @@ import java.io.OutputStream;
  *
  * @author jgsavola
  */
-public class BitStream {
+public class BitOutputStream {
     private byte buffer;
     private int position;
     private OutputStream os;
@@ -22,7 +22,7 @@ public class BitStream {
      *
      * @param os Tulostusvirta, johon bitit kirjoitetaan.
      */
-    public BitStream(OutputStream os) {
+    public BitOutputStream(OutputStream os) {
         this.buffer = 0;
         this.position = 0;
         this.os = os;

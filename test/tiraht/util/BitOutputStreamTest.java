@@ -12,8 +12,8 @@ import org.junit.*;
  *
  * @author jgsavola
  */
-public class BitStreamTest {
-    public BitStreamTest() {
+public class BitOutputStreamTest {
+    public BitOutputStreamTest() {
     }
 
     @BeforeClass
@@ -33,14 +33,14 @@ public class BitStreamTest {
     }
 
     /**
-     * Test of writeBit method, of class BitStream.
+     * Test of writeBit method, of class BitOutputStream.
      */
     @Test
     public void testWriteBit() throws Exception {
         System.out.println("writeBit");
         byte[] expected = {(byte)0xaa};
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        BitStream instance = new BitStream(bos);
+        BitOutputStream instance = new BitOutputStream(bos);
 
         instance.writeBit(true);
         instance.writeBit(false);
@@ -56,14 +56,14 @@ public class BitStreamTest {
     }
 
     /**
-     * Test of flush method, of class BitStream.
+     * Test of flush method, of class BitOutputStream.
      */
     @Test
     public void testFlush() throws Exception {
         System.out.println("flush");
         byte[] expected = {(byte)0xa0};
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        BitStream instance = new BitStream(bos);
+        BitOutputStream instance = new BitOutputStream(bos);
 
         instance.writeBit(true);
         instance.writeBit(false);

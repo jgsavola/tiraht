@@ -15,7 +15,7 @@ public class GeneralUnaryEncoder {
     private int stop;
     private long numDifferentCodes;
 
-    private BitStream bs;
+    private BitOutputStream bs;
 
     /**
      * Luo "General Unary" -kooderi.
@@ -36,7 +36,7 @@ public class GeneralUnaryEncoder {
      * @param step Bittien määrä, jolla bittijonon pituutta kasvatetaan.
      * @param stop Pisimmän bittijonon pituus
      */
-    public GeneralUnaryEncoder(BitStream bs, int start, int step, int stop) {
+    public GeneralUnaryEncoder(BitOutputStream bs, int start, int step, int stop) {
         if (stop < start)
             throw new IllegalArgumentException("stop < start");
         if (stop <= 0 || step <= 0 || stop <= 0)
