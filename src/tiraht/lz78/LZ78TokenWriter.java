@@ -14,4 +14,9 @@ public interface LZ78TokenWriter {
      * @param token Kirjoitettava kohde.
      */
     public void writeLZ78Token(LZ78Token token) throws IOException;
+
+    /**
+     * Kirjoituksen lopuksi mahdollisesti käytettävä puskuri pitää tyhjentää.
+     */
+    public void flush() throws IOException;
 }
