@@ -3,6 +3,7 @@ package tiraht;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -67,14 +68,19 @@ public class Tiraht {
     public static void testWithByteTrie() {
         for (String filename : inputFilenames) {
             try {
-                FileInputStream reader = new FileInputStream(filename);
+                InputStream is;
+                if ("-".equals(filename)) {
+                    is = System.in;
+                } else {
+                    is = new FileInputStream(filename);
+                }
 
                 /**
                  * Kompressointi
                  */
                 LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(dictSize, dictFillUpStrategy);
                 LZ78GeneralUnaryEncoder encoder = new LZ78GeneralUnaryEncoder(System.out, start, step, stop);
-                compressor.compress(reader, encoder);
+                compressor.compress(is, encoder);
 
                 /**
                  * Puskurin tyhjentämistä ei saa unohtaa!
