@@ -1,0 +1,64 @@
+LZ78-(de)kompressorin käyttöohje
+================================
+
+Varoitus! Ohjelma kirjoittaa kaikki tulosteet stdout:iin!
+
+Käyttö:
+
+  java -jar dist/tiraht.jar [-d] [muut optiot] tiedosto1 [tiedosto2 ...]
+
+Optiot:
+
+  -d
+	Purkumoodi (oletus: pakkaus).
+
+  --dict-size DICTSIZE
+        Sanakirjan maksimikoko tavuissa. Oletus: -1 (ääretön).
+
+  --dict-fill-up-strategy STRATEGY
+        Strategia sanakirjan koon hallitsemiseksi:
+            DoNothing (oletus) -- Älä tee mitään.
+	    Freeze             -- "Jäädytä" sanakirja. Uusi sanoja ei lisätä.
+	    Reset              -- Alusta uusi tyhjä sanakirja.
+
+	Huom! Strategioiden toteutus on kesken, mahdollisesti rikki.
+
+  --general-unary-params START STEP STOP
+        Ohjelman käyttävän bittikoodauksen ("General Unary") parametrit:
+            START              -- Koodit vähintään START bittiä.
+            STEP               -- Kasvata koodin kokoa aina
+                                  STEP bittiä kerrallaan.
+            STOP               -- Koodin maksimikoko STOP bittiä.
+
+        Oletus: 12 1 30. Nämä parametrit toimivat hyvin ainakin
+        tiedostoille, joiden koko on kymmenistä kiloista megatavuihin.
+
+Esimerkkejä:
+
+Pakkaa tiedostoon, pura ja vertaa:
+  $ java -jar dist/tiraht.jar testdata/alice29.txt >alice29.txt.lz78
+  $ java -jar dist/tiraht.jar -d alice29.txt.lz78 | diff testdata/alice29.txt -
+
+Pakkaus, purku ja vertailu putkessa:
+  $ java -jar dist/tiraht.jar testdata/alice29.txt | java -jar dist/tiraht.jar -d alice29.txt.lz78 | diff testdata/alice29.txt -
+
+Vertaile pakkaustehoa vaihtelemalla sanakirjan kokoa:
+  $ wc -c testdata/alice29.txt; for dictsize in 1000 2000 4000 8000 16000 32000 64000; do java -jar dist/tiraht.jar --dict-size $dictsize testdata/alice29.txt >alice29.dictsize$dictsize.lz78; wc -c alice29.dictsize$dictsize.lz78; done
+  152089 testdata/alice29.txt
+  130852 alice29.dictsize1000.lz78
+  115944 alice29.dictsize2000.lz78
+  103581 alice29.dictsize4000.lz78
+  94797 alice29.dictsize8000.lz78
+  86225 alice29.dictsize16000.lz78
+  81595 alice29.dictsize32000.lz78
+  81595 alice29.dictsize64000.lz78
+
+Vertaile pakkaustehoa vaihtelemalla koodauksen parametreja:
+  $ wc -c testdata/alice29.txt; for start in 6 8 10 12 14 16; do java -jar dist/tiraht.jar --general-unary-params $start 1 30 testdata/alice29.txt >alice29.start$start.lz78; wc -c alice29.start$start.lz78; done
+  152089 testdata/alice29.txt
+  92057 alice29.start6.lz78
+  86360 alice29.start8.lz78
+  82481 alice29.start10.lz78
+  81595 alice29.start12.lz78
+  84496 alice29.start14.lz78
+  90913 alice29.start16.lz78
