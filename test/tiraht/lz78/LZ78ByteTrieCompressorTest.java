@@ -124,7 +124,7 @@ public class LZ78ByteTrieCompressorTest {
 
         {
             LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(1, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
-            System.out.println("compress(\"" + sourceStr + "\"::byte[])");
+            System.out.println("testDictFillUpResetSize1(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);
 
@@ -146,7 +146,7 @@ public class LZ78ByteTrieCompressorTest {
 
         {
             LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(2, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
-            System.out.println("compress(\"" + sourceStr + "\"::byte[])");
+            System.out.println("testDictFillUpResetSize2(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);
 
@@ -168,7 +168,7 @@ public class LZ78ByteTrieCompressorTest {
 
         {
             LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(5, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
-            System.out.println("compress(\"" + sourceStr + "\"::byte[])");
+            System.out.println("testDictFillUpResetSize5(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);
 
@@ -184,13 +184,35 @@ public class LZ78ByteTrieCompressorTest {
      * Test of compress method, of class LZ78ByteTrieCompressor.
      */
     @Test
+    public void testDictFillUpResetSize6() throws Exception {
+        String sourceStr = "a date with a date";
+        byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
+
+        {
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(6, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            System.out.println("testDictFillUpResetSize6(\"" + sourceStr + "\"::byte[])");
+
+            compressor.compress(sourceBytes, encoder);
+
+            System.out.println(pairListToCode(encoder.getTokens()));
+
+            assertEquals("Kompressio tuottaa odotetut LZ78-koodit.",
+                    pairListToString(expectedWithResetAndDictSize6()),
+                    pairListToString(encoder.getTokens()));
+        }
+    }
+
+    /**
+     * Test of compress method, of class LZ78ByteTrieCompressor.
+     */
+    @Test
     public void testDictFillUpFreezeSize1() throws Exception {
         String sourceStr = "a date with a date";
         byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
 
         {
             LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(1, LZ78ByteTrieCompressor.DictFillUpStrategy.Freeze);
-            System.out.println("compress(\"" + sourceStr + "\"::byte[])");
+            System.out.println("testDictFillUpFreezeSize1(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);
 
@@ -220,6 +242,32 @@ public class LZ78ByteTrieCompressorTest {
 
             assertEquals("Kompressio tuottaa odotetut LZ78-koodit.",
                     pairListToString(expectedWithFreezeAndDictSize2()),
+                    pairListToString(encoder.getTokens()));
+        }
+    }
+
+    /**
+     * Test of compress method, of class LZ78ByteTrieCompressor.
+     */
+    @Test
+    public void testDictFillUpResetSize16() throws Exception {
+        String sourceStr = "Alice was beginning to get very tired of sitting by her sister"
+                + " on the bank, and of having nothing to do:  once or twice she had"
+                + " peeped into the book her sister was reading, but it had no"
+                + "pictures or conversations in it, `and what is the use of a book,'"
+                + "thought Alice `without pictures or conversation?'";
+        byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
+
+        {
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(16, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            System.out.println("testDictFillUpResetSize16: compress(\"" + sourceStr + "\"::byte[])");
+
+            compressor.compress(sourceBytes, encoder);
+
+            System.out.println(pairListToCode(encoder.getTokens()));
+
+            assertEquals("Kompressio tuottaa odotetut LZ78-koodit.",
+                    pairListToString(expectedWithResetDictSize16()),
                     pairListToString(encoder.getTokens()));
         }
     }
@@ -271,6 +319,27 @@ public class LZ78ByteTrieCompressorTest {
         return tokens;
     }
 
+    private ArrayList<LZ78Token> expectedWithResetAndDictSize6() {
+        ArrayList<LZ78Token> tokens = new ArrayList<LZ78Token>();
+        tokens.add(new LZ78Token(0, (byte)97));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)100));
+        tokens.add(new LZ78Token(1, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)119));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)97));
+        tokens.add(new LZ78Token(1, (byte)100));
+        tokens.add(new LZ78Token(2, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)101));
+
+        return tokens;
+    }
+
     private ArrayList<LZ78Token> expectedWithFreezeAndDictSize2() {
         ArrayList<LZ78Token> tokens = new ArrayList<LZ78Token>();
         tokens.add(new LZ78Token(0, (byte)97));
@@ -289,6 +358,232 @@ public class LZ78ByteTrieCompressorTest {
         tokens.add(new LZ78Token(1, (byte)116));
         tokens.add(new LZ78Token(0, (byte)101));
 
+        return tokens;
+    }
+
+    private ArrayList<LZ78Token> expectedWithResetDictSize16() {
+        ArrayList<LZ78Token> tokens = new ArrayList<LZ78Token>();
+        tokens.add(new LZ78Token(0, (byte)65));
+        tokens.add(new LZ78Token(0, (byte)108));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)99));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)119));
+        tokens.add(new LZ78Token(0, (byte)97));
+        tokens.add(new LZ78Token(0, (byte)115));
+        tokens.add(new LZ78Token(6, (byte)98));
+        tokens.add(new LZ78Token(5, (byte)103));
+        tokens.add(new LZ78Token(3, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)110));
+        tokens.add(new LZ78Token(12, (byte)103));
+        tokens.add(new LZ78Token(6, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)103));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(2, (byte)118));
+        tokens.add(new LZ78Token(4, (byte)114));
+        tokens.add(new LZ78Token(0, (byte)121));
+        tokens.add(new LZ78Token(2, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)114));
+        tokens.add(new LZ78Token(4, (byte)100));
+        tokens.add(new LZ78Token(2, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)102));
+        tokens.add(new LZ78Token(2, (byte)115));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(2, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)103));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)98));
+        tokens.add(new LZ78Token(0, (byte)121));
+        tokens.add(new LZ78Token(6, (byte)104));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(0, (byte)114));
+        tokens.add(new LZ78Token(6, (byte)115));
+        tokens.add(new LZ78Token(1, (byte)115));
+        tokens.add(new LZ78Token(2, (byte)101));
+        tokens.add(new LZ78Token(11, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(3, (byte)98));
+        tokens.add(new LZ78Token(0, (byte)97));
+        tokens.add(new LZ78Token(2, (byte)107));
+        tokens.add(new LZ78Token(0, (byte)44));
+        tokens.add(new LZ78Token(3, (byte)97));
+        tokens.add(new LZ78Token(2, (byte)100));
+        tokens.add(new LZ78Token(3, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)102));
+        tokens.add(new LZ78Token(3, (byte)104));
+        tokens.add(new LZ78Token(0, (byte)97));
+        tokens.add(new LZ78Token(0, (byte)118));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)103));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(4, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(3, (byte)110));
+        tokens.add(new LZ78Token(5, (byte)32));
+        tokens.add(new LZ78Token(8, (byte)111));
+        tokens.add(new LZ78Token(6, (byte)100));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)58));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(1, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)99));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(2, (byte)114));
+        tokens.add(new LZ78Token(1, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)119));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(4, (byte)101));
+        tokens.add(new LZ78Token(1, (byte)115));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(5, (byte)32));
+        tokens.add(new LZ78Token(12, (byte)97));
+        tokens.add(new LZ78Token(0, (byte)100));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)112));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(3, (byte)112));
+        tokens.add(new LZ78Token(3, (byte)100));
+        tokens.add(new LZ78Token(1, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(1, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(3, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)98));
+        tokens.add(new LZ78Token(9, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)107));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(0, (byte)114));
+        tokens.add(new LZ78Token(1, (byte)115));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)115));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(3, (byte)114));
+        tokens.add(new LZ78Token(1, (byte)119));
+        tokens.add(new LZ78Token(0, (byte)97));
+        tokens.add(new LZ78Token(7, (byte)32));
+        tokens.add(new LZ78Token(4, (byte)101));
+        tokens.add(new LZ78Token(11, (byte)100));
+        tokens.add(new LZ78Token(6, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)103));
+        tokens.add(new LZ78Token(0, (byte)44));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)98));
+        tokens.add(new LZ78Token(0, (byte)117));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(3, (byte)105));
+        tokens.add(new LZ78Token(6, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(0, (byte)97));
+        tokens.add(new LZ78Token(0, (byte)100));
+        tokens.add(new LZ78Token(3, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)112));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)99));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)117));
+        tokens.add(new LZ78Token(0, (byte)114));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(0, (byte)115));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(4, (byte)32));
+        tokens.add(new LZ78Token(1, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)118));
+        tokens.add(new LZ78Token(5, (byte)114));
+        tokens.add(new LZ78Token(6, (byte)97));
+        tokens.add(new LZ78Token(2, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)115));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(2, (byte)32));
+        tokens.add(new LZ78Token(5, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)44));
+        tokens.add(new LZ78Token(4, (byte)96));
+        tokens.add(new LZ78Token(0, (byte)97));
+        tokens.add(new LZ78Token(2, (byte)100));
+        tokens.add(new LZ78Token(4, (byte)119));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(10, (byte)116));
+        tokens.add(new LZ78Token(4, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)115));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(2, (byte)117));
+        tokens.add(new LZ78Token(1, (byte)101));
+        tokens.add(new LZ78Token(2, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)102));
+        tokens.add(new LZ78Token(2, (byte)97));
+        tokens.add(new LZ78Token(2, (byte)98));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(12, (byte)107));
+        tokens.add(new LZ78Token(0, (byte)44));
+        tokens.add(new LZ78Token(0, (byte)39));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)117));
+        tokens.add(new LZ78Token(0, (byte)103));
+        tokens.add(new LZ78Token(2, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)65));
+        tokens.add(new LZ78Token(0, (byte)108));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)99));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(7, (byte)96));
+        tokens.add(new LZ78Token(0, (byte)119));
+        tokens.add(new LZ78Token(10, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)104));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)117));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)32));
+        tokens.add(new LZ78Token(0, (byte)112));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)99));
+        tokens.add(new LZ78Token(4, (byte)117));
+        tokens.add(new LZ78Token(0, (byte)114));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(0, (byte)115));
+        tokens.add(new LZ78Token(5, (byte)111));
+        tokens.add(new LZ78Token(10, (byte)32));
+        tokens.add(new LZ78Token(8, (byte)111));
+        tokens.add(new LZ78Token(0, (byte)110));
+        tokens.add(new LZ78Token(0, (byte)118));
+        tokens.add(new LZ78Token(0, (byte)101));
+        tokens.add(new LZ78Token(0, (byte)114));
+        tokens.add(new LZ78Token(0, (byte)115));
+        tokens.add(new LZ78Token(0, (byte)97));
+        tokens.add(new LZ78Token(0, (byte)116));
+        tokens.add(new LZ78Token(0, (byte)105));
+        tokens.add(new LZ78Token(0, (byte)111));
+        tokens.add(new LZ78Token(1, (byte)63));
+        tokens.add(new LZ78Token(0, (byte)39));
         return tokens;
     }
 

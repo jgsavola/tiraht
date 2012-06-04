@@ -26,11 +26,10 @@ public class LZ78HashMapDecompressor implements LZ78Decompressor {
     public LZ78HashMapDecompressor(int dictSize, DictFillUpStrategy dictFillUpStrategy) {
         this.dictSize = dictSize;
         this.dictFillUpStrategy = dictFillUpStrategy;
-        if (dictSize != -1 || dictFillUpStrategy != DictFillUpStrategy.DoNothing)
-            throw new UnsupportedOperationException("Vain sanakirjastrategia DoNothing toteutettu (sanakirjan max koko -1).");
+//        if (dictSize != -1 || dictFillUpStrategy != DictFillUpStrategy.DoNothing)
+//            throw new UnsupportedOperationException("Vain sanakirjastrategia DoNothing toteutettu (sanakirjan max koko -1).");
 
-        this.reverseMap = new HashMap<Integer, ByteArray>();
-        this.reverseMap.put(0, new ByteArray());
+        resetDictionary();
     }
 
     @Override
@@ -42,9 +41,21 @@ public class LZ78HashMapDecompressor implements LZ78Decompressor {
             os.write(key.getBytes());
             os.write(token.getSuffixByte());
 
-            ByteArray keybb = new ByteArray(key.getBytes(), key.length() + 1);
-            keybb.add(token.getSuffixByte());
-            reverseMap.put(index++, keybb);
+            if (index == dictSize && dictFillUpStrategy == DictFillUpStrategy.Reset) {
+                resetDictionary();
+                index = 1;
+            }
+
+            if (dictSize == -1 || index < dictSize) {
+                ByteArray keybb = new ByteArray(key.getBytes(), key.length() + 1);
+                keybb.add(token.getSuffixByte());
+                reverseMap.put(index++, keybb);
+            }
         }
+    }
+
+    private void resetDictionary() {
+        this.reverseMap = new HashMap<Integer, ByteArray>();
+        this.reverseMap.put(0, new ByteArray());
     }
 }
