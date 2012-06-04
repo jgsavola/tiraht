@@ -40,7 +40,7 @@ Pakkaa tiedostoon, pura ja vertaa:
   $ java -jar dist/tiraht.jar -d alice29.txt.lz78 | diff testdata/alice29.txt -
 
 Pakkaus, purku ja vertailu putkessa:
-  $ java -jar dist/tiraht.jar testdata/alice29.txt | java -jar dist/tiraht.jar -d alice29.txt.lz78 | diff testdata/alice29.txt -
+  $ java -jar dist/tiraht.jar testdata/alice29.txt | java -jar dist/tiraht.jar -d - | diff testdata/alice29.txt -
 
 Vertaile pakkaustehoa vaihtelemalla sanakirjan kokoa:
   $ wc -c testdata/alice29.txt; for dictsize in 1000 2000 4000 8000 16000 32000 64000; do java -jar dist/tiraht.jar --dict-size $dictsize testdata/alice29.txt >alice29.dictsize$dictsize.lz78; wc -c alice29.dictsize$dictsize.lz78; done
