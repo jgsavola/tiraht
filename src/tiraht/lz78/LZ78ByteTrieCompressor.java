@@ -19,7 +19,7 @@ public class LZ78ByteTrieCompressor implements LZ78Compressor {
 
     private int symbolsRead;
     private int tokensWritten;
-    private int maxTokenIndex;
+    private int maxPrefixIndex;
 
     public enum DictFillUpStrategy {
         DoNothing,
@@ -35,6 +35,9 @@ public class LZ78ByteTrieCompressor implements LZ78Compressor {
     }
 
     public LZ78ByteTrieCompressor(int dictSizeLimit, DictFillUpStrategy fillUpStrategy) {
+        if (dictSizeLimit < -1 || dictSizeLimit == 0)
+            throw new IllegalArgumentException("dictSizeLimit:in pitää olla -1 tai positiivinen kokonaisluku.");
+
         trie = new ByteTrie();
         this.dictSizeLimit = dictSizeLimit;
         this.fillUpStrategy = fillUpStrategy;
@@ -51,41 +54,42 @@ public class LZ78ByteTrieCompressor implements LZ78Compressor {
         while ((symbol = is.read()) != -1) {
             symbolsRead++;
 
-            if (dictSizeLimit != -1) {
-                if (maxTokenIndex == dictSizeLimit) {
-                    if (fillUpStrategy == DictFillUpStrategy.Reset) {
-                        trie = new ByteTrie();
-                        maxTokenIndex = 0;
-                    }
-                }
+            if (maxPrefixIndex == dictSizeLimit - 1
+                && fillUpStrategy == DictFillUpStrategy.Reset) {
+                trie = new ByteTrie();
+                maxPrefixIndex = 0;
             }
 
-            ByteTrie<Integer> bt;
-            ByteTrie<Integer> lastbt = trie;
-            int lastToken = 0;
-            Integer token;
-            while ((bt = lastbt.retrieve((byte)symbol)) != null) {
+            ByteTrie<Integer> node;
+            ByteTrie<Integer> lastNode = trie;
+            int lastPrefixIndex = 0;
+            while ((node = lastNode.retrieve((byte)symbol)) != null) {
+                /**
+                 * Lue seuraava symboli. Jos syöte ehtyy, lopetetaan
+                 * iterointi. Viimeinen solmu on tällöin lastNode:ssa
+                 * ja viimeinen symboli symbol:ssa.
+                 */
                 int nextSymbol = is.read();
                 if (nextSymbol == -1)
                     break;
-                lastbt = bt;
-                symbolsRead++;
-                token = (Integer)bt.getValue();
-                lastToken = token;
+
+                lastNode = node;
+                lastPrefixIndex = (Integer)node.getValue();
                 symbol = nextSymbol;
+                symbolsRead++;
             }
             /**
              * Avainta ei löytynyt sanakirjasta.
              */
-            if (dictSizeLimit == -1 || maxTokenIndex < dictSizeLimit)
-                lastbt.insert((byte)symbol, ++maxTokenIndex);
-            writer.writeLZ78Token(new LZ78Token(lastToken, (byte)symbol));
+            if (dictSizeLimit == -1 || maxPrefixIndex < dictSizeLimit - 1)
+                lastNode.insert((byte)symbol, ++maxPrefixIndex);
+            writer.writeLZ78Token(new LZ78Token(lastPrefixIndex, (byte)symbol));
             tokensWritten++;
         }
     }
 
     public int getMaxTokenIndex() {
-        return maxTokenIndex;
+        return maxPrefixIndex;
     }
 
     public int getSymbolsRead() {
