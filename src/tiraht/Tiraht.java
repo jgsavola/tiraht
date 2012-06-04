@@ -2,15 +2,33 @@ package tiraht;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import tiraht.lz78.LZ78ByteTrieCompressor;
+import tiraht.lz78.LZ78ByteTrieCompressor.DictFillUpStrategy;
 import tiraht.lz78.LZ78GeneralUnaryDecoder;
 import tiraht.lz78.LZ78GeneralUnaryEncoder;
 import tiraht.lz78.LZ78HashMapDecompressor;
 
 public class Tiraht {
+
+    private static void writeMagic(DataOutputStream dos) throws IOException {
+        String magic = "~LZ78\000";
+        for (byte b : magic.getBytes("US-ASCII"))
+            dos.writeByte(b);
+    }
+
+    private static boolean readMagic(DataInputStream dis) throws IOException {
+        String magic = "~LZ78\000";
+        for (byte expectedByte : magic.getBytes("US-ASCII")) {
+            byte actualByte = dis.readByte();
+            if (expectedByte != actualByte)
+                return false;
+        }
+
+        return true;
+    }
+
     private enum Mode {
         Compress,
         Decompress
@@ -44,10 +62,15 @@ public class Tiraht {
 
     public static void main(String[] args) {
         parseCommandLine(args);
-        if (mode == Mode.Compress)
-            compressFiles();
-        else
-            decompressFiles();
+
+        try {
+            if (mode == Mode.Compress)
+                compressFiles();
+            else
+                decompressFiles();
+        } catch (Exception ex) {
+            Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private static void parseCommandLine(String[] args) {
@@ -91,6 +114,11 @@ public class Tiraht {
                  */
                 LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(dictSize, dictFillUpStrategy);
                 LZ78GeneralUnaryEncoder encoder = new LZ78GeneralUnaryEncoder(System.out, start, step, stop);
+
+                DataOutputStream dos = new DataOutputStream(System.out);
+                writeMagic(dos);
+                dos.writeInt(dictSize);
+                dos.writeInt(dictFillUpStrategy.ordinal());
                 encoder.writeHeader();
                 compressor.compress(is, encoder);
 
@@ -106,7 +134,7 @@ public class Tiraht {
         }
     }
 
-    public static void decompressFiles() {
+    public static void decompressFiles() throws Exception {
         for (String filename : inputFilenames) {
             try {
                 InputStream is;
@@ -119,7 +147,23 @@ public class Tiraht {
                 /**
                  * Dekompressointi
                  */
-                LZ78HashMapDecompressor decompressor = new LZ78HashMapDecompressor(dictSize, dictFillUpStrategy);
+                DataInputStream dis = new DataInputStream(is);
+                if (!readMagic(dis))
+                    throw new Exception("Tiedosto ei ole ~LZ78-tiedosto.");
+
+                int thisDictSize = dis.readInt();
+                int thisStrategyOrdinal = dis.readInt();
+                DictFillUpStrategy thisStrategy;
+                if (DictFillUpStrategy.DoNothing.ordinal() == thisStrategyOrdinal) {
+                    thisStrategy = DictFillUpStrategy.DoNothing;
+                } else if (DictFillUpStrategy.Reset.ordinal() == thisStrategyOrdinal) {
+                    thisStrategy = DictFillUpStrategy.Reset;
+                } else if (DictFillUpStrategy.Freeze.ordinal() == thisStrategyOrdinal) {
+                    thisStrategy = DictFillUpStrategy.Freeze;
+                } else {
+                    throw new Exception("Virheellinen sanakirjastrategia syötteessä");
+                }
+                LZ78HashMapDecompressor decompressor = new LZ78HashMapDecompressor(thisDictSize, thisStrategy);
                 LZ78GeneralUnaryDecoder decoder = new LZ78GeneralUnaryDecoder(is);
 
                 try {
