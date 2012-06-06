@@ -4,10 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import tiraht.dict.ByteTrie;
-import tiraht.dict.ByteTrie;
-import tiraht.lz78.LZ78Compressor;
-import tiraht.lz78.LZ78Token;
-import tiraht.lz78.LZ78TokenWriter;
 
 /**
  * LZ78-kompressio käyttäen sanakirjana <code>ByteTrie</code>-rakennetta.
@@ -20,12 +16,6 @@ public class LZ78ByteTrieCompressor implements LZ78Compressor {
     private int symbolsRead;
     private int tokensWritten;
     private int maxPrefixIndex;
-
-    public enum DictFillUpStrategy {
-        DoNothing,
-        Freeze,
-        Reset
-    };
 
     private DictFillUpStrategy fillUpStrategy;
     private int dictSizeLimit;

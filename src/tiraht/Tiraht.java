@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import tiraht.lz78.LZ78ByteTrieCompressor;
-import tiraht.lz78.LZ78ByteTrieCompressor.DictFillUpStrategy;
+import tiraht.lz78.LZ78Compressor.DictFillUpStrategy;
 import tiraht.lz78.LZ78GeneralUnaryDecoder;
 import tiraht.lz78.LZ78GeneralUnaryEncoder;
 import tiraht.lz78.LZ78HashMapDecompressor;
@@ -52,7 +52,7 @@ public class Tiraht {
     /**
      * Sanakirjan täyttyessä aloita alusta tyhjällä sanakirjalla.
      */
-    private static LZ78ByteTrieCompressor.DictFillUpStrategy dictFillUpStrategy = LZ78ByteTrieCompressor.DictFillUpStrategy.DoNothing;
+    private static DictFillUpStrategy dictFillUpStrategy = LZ78ByteTrieCompressor.DictFillUpStrategy.DoNothing;
 
     /**
      * Arvot (start=12, step=1) näyttävät tuottavan kohtalaisen tuloksen
@@ -88,11 +88,11 @@ public class Tiraht {
             } else if ("--dict-fill-up-strategy".equals(args[i])) {
                 String opt = args[++i];
                 if ("reset".equalsIgnoreCase(opt))
-                    dictFillUpStrategy = LZ78ByteTrieCompressor.DictFillUpStrategy.Reset;
+                    dictFillUpStrategy = DictFillUpStrategy.Reset;
                 else if ("donothing".equalsIgnoreCase(opt))
-                    dictFillUpStrategy = LZ78ByteTrieCompressor.DictFillUpStrategy.DoNothing;
+                    dictFillUpStrategy = DictFillUpStrategy.DoNothing;
                 else if ("freeze".equalsIgnoreCase(opt))
-                    dictFillUpStrategy = LZ78ByteTrieCompressor.DictFillUpStrategy.Freeze;
+                    dictFillUpStrategy = DictFillUpStrategy.Freeze;
                 else
                     throw new IllegalArgumentException("Tuntematon sanakirjastrategia: " + opt);
             } else if ("--general-unary-params".equals(args[i])) {

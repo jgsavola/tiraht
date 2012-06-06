@@ -13,6 +13,24 @@ import java.io.InputStream;
  */
 public interface LZ78Compressor {
     /**
+     * Strategia sanakirjan täyttymisen varalle.
+     */
+    public enum DictFillUpStrategy {
+        /**
+         * Ei tehdä mitään. Sanakirjan koko on rajoittamaton.
+         */
+        DoNothing,
+        /**
+         * Jatketaan sanakirjan käyttöä, mutta uusia sanoja ei enää lisätä.
+         */
+        Freeze,
+        /**
+         * Tyhjennetään sanakirja ja aloitetaan sanakirjan täyttäminen alusta.
+         */
+        Reset
+    };
+
+    /**
      * Kompressoi tavumuotoinen syötevirta (kokonaisluku, tavu)-pareiksi.
      *
      * @param is Syötevirta, josta kompressoitavat tavut luetaan.

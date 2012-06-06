@@ -1,15 +1,11 @@
 package tiraht.lz78;
 
-import tiraht.lz78.LZ78Token;
-import tiraht.lz78.LZ78ByteTrieCompressor;
-import tiraht.lz78.LZ78ToArrayListEncoder;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import org.junit.*;
+import tiraht.lz78.LZ78Compressor.DictFillUpStrategy;
 
 /**
  * Testaa LZ78ByteTrieCompressor-luokkaa.
@@ -101,13 +97,13 @@ public class LZ78ByteTrieCompressorTest {
         byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
 
         try {
-            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(0, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(0, DictFillUpStrategy.Reset);
             fail("Sanakirjan koko 0 tai < -1 on virhe");
         } catch (IllegalArgumentException ex) {
             assertTrue("Sanakirjan koko 0 tai < -1 on virhe", true);
         }
         try {
-            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(-2, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(-2, DictFillUpStrategy.Reset);
             fail("Sanakirjan koko 0 tai < -1 on virhe");
         } catch (IllegalArgumentException ex) {
             assertTrue("Sanakirjan koko 0 tai < -1 on virhe", true);
@@ -123,7 +119,7 @@ public class LZ78ByteTrieCompressorTest {
         byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
 
         {
-            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(1, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(1, DictFillUpStrategy.Reset);
             System.out.println("testDictFillUpResetSize1(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);
@@ -145,7 +141,7 @@ public class LZ78ByteTrieCompressorTest {
         byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
 
         {
-            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(2, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(2, DictFillUpStrategy.Reset);
             System.out.println("testDictFillUpResetSize2(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);
@@ -167,7 +163,7 @@ public class LZ78ByteTrieCompressorTest {
         byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
 
         {
-            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(5, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(5, DictFillUpStrategy.Reset);
             System.out.println("testDictFillUpResetSize5(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);
@@ -189,7 +185,7 @@ public class LZ78ByteTrieCompressorTest {
         byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
 
         {
-            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(6, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(6, DictFillUpStrategy.Reset);
             System.out.println("testDictFillUpResetSize6(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);
@@ -211,7 +207,7 @@ public class LZ78ByteTrieCompressorTest {
         byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
 
         {
-            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(1, LZ78ByteTrieCompressor.DictFillUpStrategy.Freeze);
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(1, DictFillUpStrategy.Freeze);
             System.out.println("testDictFillUpFreezeSize1(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);
@@ -233,7 +229,7 @@ public class LZ78ByteTrieCompressorTest {
         byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
 
         {
-            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(2, LZ78ByteTrieCompressor.DictFillUpStrategy.Freeze);
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(2, DictFillUpStrategy.Freeze);
             System.out.println("testDictFillUpFreezeSize2: compress(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);
@@ -259,7 +255,7 @@ public class LZ78ByteTrieCompressorTest {
         byte[] sourceBytes = sourceStr.getBytes("US-ASCII");
 
         {
-            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(16, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(16, DictFillUpStrategy.Reset);
             System.out.println("testDictFillUpResetSize16: compress(\"" + sourceStr + "\"::byte[])");
 
             compressor.compress(sourceBytes, encoder);

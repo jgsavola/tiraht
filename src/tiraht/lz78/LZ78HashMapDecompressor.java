@@ -3,7 +3,7 @@ package tiraht.lz78;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
-import tiraht.lz78.LZ78ByteTrieCompressor.DictFillUpStrategy;
+import tiraht.lz78.LZ78Compressor.DictFillUpStrategy;
 import tiraht.util.ByteArray;
 
 /**
