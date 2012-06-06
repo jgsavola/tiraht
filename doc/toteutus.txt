@@ -43,6 +43,25 @@ Koska avainta haetaan iteratiivisesti kasvattaen avainta loppupäästä,
 voidaan hakua jatkaa siitä ByteTrien haarasta, johon edellinen haku
 päättyi. Tämä korjasi pahimman suorituskykyongelman.
 
+Ensimmäisessä ByteTrie-toteutuksessa lapsisolmujen säilytykseen käytin
+javan TreeMap-rakennetta. Korvasin TreeMapin seuraavaksi
+järjestämättömällä taulukolla. Tällöin taulukkoon lisääminen tapahtui
+niin, että jos taulukossa oli tilaa, uusi lapsisolmu lisättiin
+taulukon loppuun. Jos taas taulukko oli täynnä, muodostettiin uusi
+suurempi taulukko ja vanhan taulukon alkiot kopioitiin uuteen.
+Lisääminen tehtiin aina taulukon loppuun. Tällöin lapsisolmun
+lisäämisen kuoletettu kustannus oli O(1). Lapsisolmujen haku oli
+yksinkertainen lineaarinen haku, aikavaativuudeltaan O(n). Hieman
+yllättäen kompression suorituskyky kasvoi n. 10% verrattuna
+TreeMap-toteutukseen. Jos jätetään huomiotta bittikoodauksen vaatima
+aika, suorituskyvyn kasvu oli kymmeniä prosentteja.
+
+Seuraavassa versiossa lapsisolmut tallennettiin järjestettyyn
+taulukkoon. Tällöin lisäämisen kuoletetuksi aikavaativuudes kasvoi
+luokkaan O(n), mutta hakemisen puolestaan laski luokkaan O(log n).
+Suorituskyvyn kasvu oli samaa luokkaa kuin edellisessä vaiheessa (n.
+10% koko ohjelma, pelkkä LZ78 (arviolta) huomattavasti enemmän).
+
 
 Kompressoidun datan koodaus
 ---------------------------
