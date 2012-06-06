@@ -121,11 +121,11 @@ public class Tiraht {
                 boolean removeInputFile = false;
 
                 if (inputFile.isDirectory()) {
-                    System.err.println("'" + filename + "' on hakemisto. Ohitetaan.");
+                    System.err.println(filename + " on hakemisto. Ohitetaan.");
                     continue;
                 }
                 if (filename.endsWith(".lz78")) {
-                    System.err.println("Tiedostolla '" + filename + "' on jo pääte '.lz78'. Ohitetaan.");
+                    System.err.println("Tiedostolla " + filename + " on jo pääte '.lz78'. Ohitetaan.");
                     continue;
                 }
 
@@ -201,11 +201,11 @@ public class Tiraht {
                 OutputStream os;
 
                 if (inputFile.isDirectory()) {
-                    System.err.println("'" + filename + "' on hakemisto. Ohitetaan.");
+                    System.err.println(filename + " on hakemisto. Ohitetaan.");
                     continue;
                 }
                 if (!filename.endsWith(".lz78")) {
-                    System.err.println("Tiedostolla '" + filename + "' on tuntematon pääte. Ohitetaan.");
+                    System.err.println("Tiedostolla " + filename + " on tuntematon pääte. Ohitetaan.");
                     continue;
                 }
 
@@ -224,7 +224,7 @@ public class Tiraht {
                  */
                 DataInputStream dis = new DataInputStream(is);
                 if (!readMagic(dis)) {
-                    System.err.println("Tiedosto '" + filename + "' ei ole ~LZ78-tiedosto. Ohitetaan");
+                    System.err.println("Tiedosto " + filename + " ei ole ~LZ78-tiedosto. Ohitetaan");
                     continue;
                 }
 
