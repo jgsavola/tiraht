@@ -133,7 +133,7 @@ public class Tiraht {
                     is = System.in;
                     os = System.out;
                 } else {
-                    is = new FileInputStream(inputFile);
+                    is = new BufferedInputStream(new FileInputStream(inputFile));
                     if (forceOutput)
                         os = System.out;
                     else {
@@ -143,7 +143,7 @@ public class Tiraht {
                          */
                         String compressedFileName = filename + ".lz78";
                         outputFile = new File(compressedFileName);
-                        os = new FileOutputStream(outputFile);
+                        os = new BufferedOutputStream(new FileOutputStream(outputFile));
                         removeInputFile = true;
                     }
                 }
@@ -214,8 +214,8 @@ public class Tiraht {
                     os = System.out;
                 } else {
                     String outputFileName = filename.replaceFirst("\\.lz78$", "");
-                    is = new FileInputStream(inputFile);
-                    os = new FileOutputStream(outputFileName);
+                    is = new BufferedInputStream(new FileInputStream(inputFile));
+                    os = new BufferedOutputStream(new FileOutputStream(outputFileName));
                     removeInputFile = true;
                 }
 
