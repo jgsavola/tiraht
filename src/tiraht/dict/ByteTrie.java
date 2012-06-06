@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Trie-rakenne, joka käyttää avaimena tavujonoa.
  *
- * Tämä toteutus käyttää lapsisolmujen tallentamiseen TreeMap-rakennetta.
+ * Tämä toteutus käyttää lapsisolmujen tallentamiseen järjestettyä taulukkoa.
  *
  * @author jonne
  */
@@ -101,25 +101,58 @@ public class ByteTrie implements Trie {
     }
 
     /**
+     * Hae lapsisolmun indeksi avaimella <code>key</code> käyttäen binäärihakua.
+     *
+     * @param key Avain.
+     * @return Lapsisolmun indeksi tai -1, jos solmua ei löydy.
+     */
+    private int binarySearch(Byte key) {
+        int left = 0;
+        int right = numChildren - 1;
+
+        while (right >= left) {
+            int i = (left + right) / 2;
+            if (key == children[i].nodeKey)
+                return i;
+            if (key > children[i].nodeKey) {
+                left = i + 1;
+            } else {
+                right = i - 1;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
      * Hae solmun lapsi avaimella <code>key</code>.
      *
      * @param key Avain tavumuodossa.
      * @return Lapsisolmu tai <code>null</code>.
      */
     private ByteTrie findChild(Byte key) {
-        for (int i = 0; i < numChildren; i++) {
-            ByteTrie trie = children[i];
-            if (trie.nodeKey == key)
-                return trie;
-        }
-
-        return null;
+        int i = binarySearch(key);
+        if (i == -1)
+            return null;
+        return children[i];
     }
 
     /**
      * Lisää solmuun lapsisolmu <code>child</code>.
      *
      * Avaimena käytetään lapsisolmun attribuuttia <code>nodeKey</code>.
+     *
+     * Jos taulukko täyttyy, luodaan uusi isompi taulukko, johon
+     * vanhan taulun alkiot kopioidaan.
+     *
+     * Lisääminen tehdään taulukon loppuun, josta lisättävä alkio kuljetetaan
+     * oikealle paikalle käyttäen <code>nodeKey</code>-kenttää vertailuarvona.
+     *
+     * Näin lapsisolmut pysyvät järjestyksessä, mikä mahdollistaa binäärihaun
+     * käyttämisen.
+     *
+     * Optimointimahdollisuus: haetaan oikea paikka binäärihaulla, sijoitetaan
+     * uusi alkio ja siirretään lopputaulukon alkioita yksi paikka oikealle.
      *
      * @param child Lisättävä lapsisolmu.
      */
@@ -131,6 +164,11 @@ public class ByteTrie implements Trie {
             children = newArray;
         }
         children[numChildren] = child;
+        for (int i = numChildren; i > 0 && children[i].nodeKey < children[i - 1].nodeKey; i--) {
+            ByteTrie tmp = children[i];
+            children[i] = children[i - 1];
+            children[i - 1] = tmp;
+        }
         numChildren++;
     }
 
