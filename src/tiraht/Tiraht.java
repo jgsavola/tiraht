@@ -11,7 +11,6 @@ import tiraht.lz78.LZ78GeneralUnaryEncoder;
 import tiraht.lz78.LZ78HashMapDecompressor;
 
 public class Tiraht {
-
     private static void writeMagic(DataOutputStream dos) throws IOException {
         String magic = "~LZ78\000";
         for (byte b : magic.getBytes("US-ASCII"))
@@ -29,22 +28,31 @@ public class Tiraht {
         return true;
     }
 
+    private static boolean verbose = false;
+
     private enum Mode {
         Compress,
         Decompress
     };
 
-    static Mode mode = Mode.Compress;
+    private static Mode mode = Mode.Compress;
+
+    /**
+     * Jos forceOutput == false, kirjoita tiedostoon.
+     * Jos forceOutput == true, kirjoita stdout:iin.
+     * (Mukaelma gzip:n optioista -f ja -c.)
+     */
+    private static boolean forceOutput = false;
 
     /**
      * Käytä pientä sanakirjaa, jotta muistinkäyttö ei olisi liian suuri.
      */
-    static int dictSize = -1;
+    private static int dictSize = -1;
 
     /**
      * Sanakirjan täyttyessä aloita alusta tyhjällä sanakirjalla.
      */
-    static LZ78ByteTrieCompressor.DictFillUpStrategy dictFillUpStrategy = LZ78ByteTrieCompressor.DictFillUpStrategy.DoNothing;
+    private static LZ78ByteTrieCompressor.DictFillUpStrategy dictFillUpStrategy = LZ78ByteTrieCompressor.DictFillUpStrategy.DoNothing;
 
     /**
      * Arvot (start=12, step=1) näyttävät tuottavan kohtalaisen tuloksen
@@ -54,11 +62,11 @@ public class Tiraht {
      * Suurin koodattava koodi olkoon 30 bittiä, jotta ei tule
      * kokonaislukuylivuotoa.
      */
-    static int start = 12;
-    static int step = 1;
-    static int stop = 30;
+    private static int start = 12;
+    private static int step = 1;
+    private static int stop = 30;
 
-    static ArrayList<String> inputFilenames = new ArrayList<String>();
+    private static ArrayList<String> inputFilenames = new ArrayList<String>();
 
     public static void main(String[] args) {
         parseCommandLine(args);
@@ -93,6 +101,10 @@ public class Tiraht {
                 stop = Integer.parseInt(args[++i]);
             } else if ("-d".equals(args[i])) {
                 mode = Mode.Decompress;
+            } else if ("-f".equals(args[i])) {
+                forceOutput = true;
+            } else if ("-v".equals(args[i])) {
+                verbose = true;
             } else {
                 inputFilenames.add(args[i]);
             }
@@ -101,21 +113,51 @@ public class Tiraht {
 
     public static void compressFiles() {
         for (String filename : inputFilenames) {
+            File inputFile = new File(filename);
+            File outputFile = null;
             try {
                 InputStream is;
+                OutputStream os;
+                boolean removeInputFile = false;
+
+                if (inputFile.isDirectory()) {
+                    System.err.println("'" + filename + "' on hakemisto. Ohitetaan.");
+                    continue;
+                }
+                if (filename.endsWith(".lz78")) {
+                    System.err.println("Tiedostolla '" + filename + "' on jo pääte '.lz78'. Ohitetaan.");
+                    continue;
+                }
+
                 if ("-".equals(filename)) {
                     is = System.in;
+                    os = System.out;
                 } else {
-                    is = new FileInputStream(filename);
+                    is = new FileInputStream(inputFile);
+                    if (forceOutput)
+                        os = System.out;
+                    else {
+                        /**
+                         * Syötetiedosto korvataan .lz78-loppuisella pakatulla
+                         * tiedostolla.
+                         */
+                        String compressedFileName = filename + ".lz78";
+                        outputFile = new File(compressedFileName);
+                        os = new FileOutputStream(outputFile);
+                        removeInputFile = true;
+                    }
                 }
+
+                if (verbose)
+                    System.err.printf("%-30s ", filename + ":");
 
                 /**
                  * Kompressointi
                  */
                 LZ78ByteTrieCompressor compressor = new LZ78ByteTrieCompressor(dictSize, dictFillUpStrategy);
-                LZ78GeneralUnaryEncoder encoder = new LZ78GeneralUnaryEncoder(System.out, start, step, stop);
+                LZ78GeneralUnaryEncoder encoder = new LZ78GeneralUnaryEncoder(os, start, step, stop);
 
-                DataOutputStream dos = new DataOutputStream(System.out);
+                DataOutputStream dos = new DataOutputStream(os);
                 writeMagic(dos);
                 dos.writeInt(dictSize);
                 dos.writeInt(dictFillUpStrategy.ordinal());
@@ -126,6 +168,22 @@ public class Tiraht {
                  * Puskurin tyhjentämistä ei saa unohtaa!
                  */
                 encoder.flush();
+
+                if (os != System.out)
+                    os.close();
+
+                if (removeInputFile)
+                    inputFile.delete();
+
+                int bytesRead = compressor.getSymbolsRead();
+                int tokensWritten = compressor.getTokensWritten();
+                long bytesWritten = 0;
+                if (outputFile != null)
+                    bytesWritten = outputFile.length();
+
+                System.err.println("" + (bytesRead - bytesWritten)*100 / bytesRead
+                        + "% (sisään " + bytesRead + " tavua; ulos "
+                        + tokensWritten + " koodia pakattuna " + bytesWritten + " tavuun). Pakkaussuhde: " + (float)bytesRead / bytesWritten + ":1");
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -136,20 +194,39 @@ public class Tiraht {
 
     public static void decompressFiles() throws Exception {
         for (String filename : inputFilenames) {
+            File inputFile = new File(filename);
+            boolean removeInputFile = false;
             try {
                 InputStream is;
+                OutputStream os;
+
+                if (inputFile.isDirectory()) {
+                    System.err.println("'" + filename + "' on hakemisto. Ohitetaan.");
+                    continue;
+                }
+                if (!filename.endsWith(".lz78")) {
+                    System.err.println("Tiedostolla '" + filename + "' on tuntematon pääte. Ohitetaan.");
+                    continue;
+                }
+
                 if ("-".equals(filename)) {
                     is = System.in;
+                    os = System.out;
                 } else {
-                    is = new FileInputStream(filename);
+                    String outputFileName = filename.replaceFirst("\\.lz78$", "");
+                    is = new FileInputStream(inputFile);
+                    os = new FileOutputStream(outputFileName);
+                    removeInputFile = true;
                 }
 
                 /**
                  * Dekompressointi
                  */
                 DataInputStream dis = new DataInputStream(is);
-                if (!readMagic(dis))
-                    throw new Exception("Tiedosto ei ole ~LZ78-tiedosto.");
+                if (!readMagic(dis)) {
+                    System.err.println("Tiedosto '" + filename + "' ei ole ~LZ78-tiedosto. Ohitetaan");
+                    continue;
+                }
 
                 int thisDictSize = dis.readInt();
                 int thisStrategyOrdinal = dis.readInt();
@@ -167,7 +244,7 @@ public class Tiraht {
                 LZ78GeneralUnaryDecoder decoder = new LZ78GeneralUnaryDecoder(is);
 
                 try {
-                    decompressor.decompress(decoder, System.out);
+                    decompressor.decompress(decoder, os);
                 } catch (EOFException ex) {
                    /**
                     * EOFException ei ole virhe. Dataa luetaan niin kauan
@@ -185,7 +262,16 @@ public class Tiraht {
                     * on kriittistä. Muuten viimeiset tavut voivat jäädä
                     * kirjoittamatta.
                     */
-                    System.out.flush();
+                    os.flush();
+
+                    if (os != System.out)
+                        os.close();
+
+                    if (is != System.in)
+                        is.close();
+
+                    if (removeInputFile)
+                        inputFile.delete();
                 }
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
