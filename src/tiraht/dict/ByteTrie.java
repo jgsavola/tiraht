@@ -2,7 +2,6 @@ package tiraht.dict;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeMap;
 
 /**
  * Trie-rakenne, joka käyttää avaimena tavujonoa.
@@ -16,7 +15,9 @@ public class ByteTrie implements Trie {
     private boolean isValid;
     private Integer value;
 
-    private TreeMap<Byte, ByteTrie> children;
+    int numChildren;
+    int childrenArraySize;
+    private ByteTrie[] children;
 
     /**
      * Luo uusi <code>ByteTrie</code> tulokaaren koodilla <code>nodeKey</code>.
@@ -33,7 +34,9 @@ public class ByteTrie implements Trie {
      */
     public ByteTrie() {
         this.isValid = false;
-        this.children = new TreeMap<Byte, ByteTrie>();
+        this.numChildren = 0;
+        this.childrenArraySize = 1;
+        this.children = new ByteTrie[childrenArraySize];
     }
 
     /**
@@ -104,7 +107,13 @@ public class ByteTrie implements Trie {
      * @return Lapsisolmu tai <code>null</code>.
      */
     private ByteTrie findChild(Byte key) {
-        return children.get(key);
+        for (int i = 0; i < numChildren; i++) {
+            ByteTrie trie = children[i];
+            if (trie.nodeKey == key)
+                return trie;
+        }
+
+        return null;
     }
 
     /**
@@ -115,7 +124,14 @@ public class ByteTrie implements Trie {
      * @param child Lisättävä lapsisolmu.
      */
     private void addChild(ByteTrie child) {
-        children.put(child.nodeKey, child);
+        if (numChildren == childrenArraySize) {
+            childrenArraySize *= 2;
+            ByteTrie[] newArray = new ByteTrie[childrenArraySize];
+            System.arraycopy(children, 0, newArray, 0, numChildren);
+            children = newArray;
+        }
+        children[numChildren] = child;
+        numChildren++;
     }
 
     /**
