@@ -51,7 +51,7 @@ public class ByteTrieTest {
         key.add((byte)0x62);
         key.add((byte)0x63);
         Integer expValue = 42;
-        ByteTrie<Integer> instance = new ByteTrie<Integer>();
+        ByteTrie instance = new ByteTrie();
         instance.insert(key, expValue);
 
         Integer value = instance.search(key);
@@ -74,7 +74,7 @@ public class ByteTrieTest {
         key.add((byte)0x63);
 
         Integer expValue = 42;
-        ByteTrie<Integer> instance = new ByteTrie<Integer>();
+        ByteTrie instance = new ByteTrie();
         instance.insert(key.iterator(), expValue);
 
         Integer value = instance.search(key.iterator());
@@ -95,11 +95,11 @@ public class ByteTrieTest {
         int index = 0;
         byte[] bytes = {(byte)0xa1, (byte)0xa2, (byte)0xa3};
         ByteArray key = new ByteArray();
-        ByteTrie<Integer> instance = new ByteTrie<Integer>();
+        ByteTrie instance = new ByteTrie();
 
         instance.insert(key.iterator(), index++);
 
-        ByteTrie<Integer> trie = instance.retrieve(key.iterator());
+        ByteTrie trie = instance.retrieve(key.iterator());
         assertEquals(0, (int)trie.getValue());
 
         key.add(bytes[0]);

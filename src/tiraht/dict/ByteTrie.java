@@ -11,12 +11,12 @@ import java.util.TreeMap;
  *
  * @author jonne
  */
-public class ByteTrie<E> implements Trie {
+public class ByteTrie implements Trie {
     private byte nodeKey;
     private boolean isValid;
-    private E value;
+    private Integer value;
 
-    private TreeMap<Byte, ByteTrie<E>> children;
+    private TreeMap<Byte, ByteTrie> children;
 
     /**
      * Luo uusi <code>ByteTrie</code> tulokaaren koodilla <code>nodeKey</code>.
@@ -33,7 +33,7 @@ public class ByteTrie<E> implements Trie {
      */
     public ByteTrie() {
         this.isValid = false;
-        this.children = new TreeMap<Byte, ByteTrie<E>>();
+        this.children = new TreeMap<Byte, ByteTrie>();
     }
 
     /**
@@ -43,7 +43,7 @@ public class ByteTrie<E> implements Trie {
      *
      * @return Solmun arvo.
      */
-    public E getValue() {
+    public Integer getValue() {
         return value;
     }
 
@@ -53,7 +53,7 @@ public class ByteTrie<E> implements Trie {
      * @param key Avain tavuiteraattorina.
      * @param value Lisättävä arvo.
      */
-    public void insert(Iterator<Byte> key, E value) {
+    public void insert(Iterator<Byte> key, Integer value) {
         if (!key.hasNext()) {
             this.value = value;
             this.isValid = true;
@@ -61,9 +61,9 @@ public class ByteTrie<E> implements Trie {
         }
 
         Byte b = key.next();
-        ByteTrie<E> child = findChild(b);
+        ByteTrie child = findChild(b);
         if (child == null) {
-            child = new ByteTrie<E>(b);
+            child = new ByteTrie(b);
             addChild(child);
         }
         child.insert(key, value);
@@ -75,7 +75,7 @@ public class ByteTrie<E> implements Trie {
      * @param key Avain tavulistana.
      * @param value Lisättävä arvo.
      */
-    public void insert(List<Byte> key, E value) {
+    public void insert(List<Byte> key, Integer value) {
         insert(key.listIterator(), value);
     }
 
@@ -85,10 +85,10 @@ public class ByteTrie<E> implements Trie {
      * @param key Avain tavuna.
      * @param value Lisättävä arvo.
      */
-    public void insert(Byte key, E value) {
-        ByteTrie<E> child = findChild(key);
+    public void insert(Byte key, Integer value) {
+        ByteTrie child = findChild(key);
         if (child == null) {
-            child = new ByteTrie<E>(key);
+            child = new ByteTrie(key);
             addChild(child);
         } else {
             child.nodeKey = key;
@@ -103,7 +103,7 @@ public class ByteTrie<E> implements Trie {
      * @param key Avain tavumuodossa.
      * @return Lapsisolmu tai <code>null</code>.
      */
-    private ByteTrie<E> findChild(Byte key) {
+    private ByteTrie findChild(Byte key) {
         return children.get(key);
     }
 
@@ -114,7 +114,7 @@ public class ByteTrie<E> implements Trie {
      *
      * @param child Lisättävä lapsisolmu.
      */
-    private void addChild(ByteTrie<E> child) {
+    private void addChild(ByteTrie child) {
         children.put(child.nodeKey, child);
     }
 
@@ -124,7 +124,7 @@ public class ByteTrie<E> implements Trie {
      * @param key Avain tavulistana.
      * @return Löydetty arvo tai <code>null</code>.
      */
-    public E search(List<Byte> key) {
+    public Integer search(List<Byte> key) {
         return search(key.listIterator());
     }
 
@@ -134,7 +134,7 @@ public class ByteTrie<E> implements Trie {
      * @param key Avain tavuiteraattorina.
      * @return Löydetty arvo tai <code>null</code>.
      */
-    public E search(Iterator<Byte> key) {
+    public Integer search(Iterator<Byte> key) {
         if (!key.hasNext()) {
             if (isValid)
                 return value;
@@ -142,7 +142,7 @@ public class ByteTrie<E> implements Trie {
         }
 
         byte b = key.next();
-        ByteTrie<E> child = findChild(b);
+        ByteTrie child = findChild(b);
         if (child == null)
             return null;
 
@@ -157,7 +157,7 @@ public class ByteTrie<E> implements Trie {
      * @param key Avain tavuiteraattorina.
      * @return Löydetty solmu tai <code>null</code>.
      */
-    public ByteTrie<E> retrieve(Iterator<Byte> key) {
+    public ByteTrie retrieve(Iterator<Byte> key) {
         if (!key.hasNext()) {
             if (isValid)
                 return this;
@@ -165,7 +165,7 @@ public class ByteTrie<E> implements Trie {
         }
 
         byte b = key.next();
-        ByteTrie<E> child = findChild(b);
+        ByteTrie child = findChild(b);
         if (child == null)
             return null;
 
@@ -180,7 +180,7 @@ public class ByteTrie<E> implements Trie {
      * @param key Avain tavuna.
      * @return Löydetty solmu tai <code>null</code>.
      */
-    public ByteTrie<E> retrieve(Byte key) {
+    public ByteTrie retrieve(Byte key) {
         return findChild(key);
     }
 }

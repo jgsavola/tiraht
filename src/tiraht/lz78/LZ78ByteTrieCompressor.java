@@ -50,8 +50,8 @@ public class LZ78ByteTrieCompressor implements LZ78Compressor {
                 maxPrefixIndex = 0;
             }
 
-            ByteTrie<Integer> node;
-            ByteTrie<Integer> lastNode = trie;
+            ByteTrie node;
+            ByteTrie lastNode = trie;
             int lastPrefixIndex = 0;
             while ((node = lastNode.retrieve((byte)symbol)) != null) {
                 /**
