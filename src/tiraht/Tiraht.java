@@ -45,6 +45,12 @@ public class Tiraht {
     private static boolean forceOutput = false;
 
     /**
+     * Jos noDelete == false, hävitä käsiteltävä tiedosto, jos tulostiedosto
+     * on syntynyt. Jos noDelete == true, jätä käsiteltävä tiedosto ennalleen.
+     */
+    private static boolean noDelete = false;
+
+    /**
      * Käytä pientä sanakirjaa, jotta muistinkäyttö ei olisi liian suuri.
      */
     private static int dictSize = -1;
@@ -105,6 +111,8 @@ public class Tiraht {
                 forceOutput = true;
             } else if ("-v".equals(args[i])) {
                 verbose = true;
+            } else if ("--no-delete".equals(args[i])) {
+                noDelete = true;
             } else {
                 inputFilenames.add(args[i]);
             }
@@ -172,7 +180,7 @@ public class Tiraht {
                 if (os != System.out)
                     os.close();
 
-                if (removeInputFile)
+                if (removeInputFile && !noDelete)
                     inputFile.delete();
 
                 int bytesRead = compressor.getSymbolsRead();
@@ -270,7 +278,7 @@ public class Tiraht {
                     if (is != System.in)
                         is.close();
 
-                    if (removeInputFile)
+                    if (removeInputFile && !noDelete)
                         inputFile.delete();
                 }
             } catch (FileNotFoundException ex) {
