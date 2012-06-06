@@ -274,3 +274,48 @@ pakkaus(testdata/zero): symboleita=1000000, koodeja=1414 (4502/s), aika=314.0690
 purku(testdata/zero)  : symboleita=1000000, aika=1.632641ms, muisti=3184272
 pakkaus(testdata/emacs): symboleita=10819544, koodeja=1129636 (249705/s), aika=4523.86498ms, muisti=174331096
 purku(testdata/emacs)  : symboleita=10819544, aika=757.027728ms, muisti=162562832
+
+==== Myöhemmin 178ddf096e90000f806d2a4176d3851630b61fe6 =====
+
+jgsavola@dhp-5:~/tiraht$ /usr/bin/time java -jar dist/tiraht.jar --no-delete -v `ls -d testdata.lz78/* | grep -v 'lz78$'`
+testdata.lz78/alice29.txt:     46% (sisään 152089 tavua; ulos 81609 tavua; 29091 koodia). Pakkaussuhde: 1.86:1
+testdata.lz78/canterbury on hakemisto. Ohitetaan.
+testdata.lz78/cantrbry.tar.gz: -8% (sisään 739071 tavua; ulos 802174 tavua; 255194 koodia). Pakkaussuhde: 0.92:1
+testdata.lz78/changelog:       70% (sisään 8035435 tavua; ulos 2352045 tavua; 633062 koodia). Pakkaussuhde: 3.42:1
+testdata.lz78/dpkg.status:     58% (sisään 2326872 tavua; ulos 957532 tavua; 284443 koodia). Pakkaussuhde: 2.43:1
+testdata.lz78/emacs:           59% (sisään 10819544 tavua; ulos 4373878 tavua; 1129636 koodia). Pakkaussuhde: 2.47:1
+testdata.lz78/IP-Masquerade-HOWTO: 65% (sisään 708351 tavua; ulos 243709 tavua; 80214 koodia). Pakkaussuhde: 2.91:1
+testdata.lz78/urandom:         -12% (sisään 1000000 tavua; ulos 1127176 tavua; 354389 koodia). Pakkaussuhde: 0.89:1
+testdata.lz78/zero:            99% (sisään 1000000 tavua; ulos 3729 tavua; 1414 koodia). Pakkaussuhde: 268.17:1
+4.47user 0.18system 0:04.24elapsed 109%CPU (0avgtext+0avgdata 1149840maxresident)k
+0inputs+19440outputs (0major+73206minor)pagefaults 0swaps
+
+==== TreeMap ==> lineaarinen haku efc5eb49fe66f0d3edce77bfe380293f58905ca8 ====
+
+jgsavola@dhp-5:~/tiraht$ /usr/bin/time java -jar dist/tiraht.jar --no-delete -v `ls -d testdata.lz78/* | grep -v 'lz78$'`
+testdata.lz78/alice29.txt:     46% (sisään 152089 tavua; ulos 81609 tavua; 29091 koodia). Pakkaussuhde: 1.86:1
+testdata.lz78/canterbury on hakemisto. Ohitetaan.
+testdata.lz78/cantrbry.tar.gz: -8% (sisään 739071 tavua; ulos 802174 tavua; 255194 koodia). Pakkaussuhde: 0.92:1
+testdata.lz78/changelog:       70% (sisään 8035435 tavua; ulos 2352045 tavua; 633062 koodia). Pakkaussuhde: 3.42:1
+testdata.lz78/dpkg.status:     58% (sisään 2326872 tavua; ulos 957532 tavua; 284443 koodia). Pakkaussuhde: 2.43:1
+testdata.lz78/emacs:           59% (sisään 10819544 tavua; ulos 4373878 tavua; 1129636 koodia). Pakkaussuhde: 2.47:1
+testdata.lz78/IP-Masquerade-HOWTO: 65% (sisään 708351 tavua; ulos 243709 tavua; 80214 koodia). Pakkaussuhde: 2.91:1
+testdata.lz78/urandom:         -12% (sisään 1000000 tavua; ulos 1127176 tavua; 354389 koodia). Pakkaussuhde: 0.89:1
+testdata.lz78/zero:            99% (sisään 1000000 tavua; ulos 3729 tavua; 1414 koodia). Pakkaussuhde: 268.17:1
+4.03user 0.09system 0:04.19elapsed 98%CPU (0avgtext+0avgdata 739120maxresident)k
+0inputs+19440outputs (0major+47121minor)pagefaults 0swaps
+
+==== Lineaarinen haku ==> binäärihaku 230e9305a7d6b0b1e1e58097b622271f6d3dd59c ====
+
+jgsavola@dhp-5:~/tiraht$ /usr/bin/time java -jar dist/tiraht.jar --no-delete -v `ls -d testdata.lz78/* | grep -v 'lz78$'`
+testdata.lz78/alice29.txt:     46% (sisään 152089 tavua; ulos 81609 tavua; 29091 koodia). Pakkaussuhde: 1.86:1
+testdata.lz78/canterbury on hakemisto. Ohitetaan.
+testdata.lz78/cantrbry.tar.gz: -8% (sisään 739071 tavua; ulos 802174 tavua; 255194 koodia). Pakkaussuhde: 0.92:1
+testdata.lz78/changelog:       70% (sisään 8035435 tavua; ulos 2352045 tavua; 633062 koodia). Pakkaussuhde: 3.42:1
+testdata.lz78/dpkg.status:     58% (sisään 2326872 tavua; ulos 957532 tavua; 284443 koodia). Pakkaussuhde: 2.43:1
+testdata.lz78/emacs:           59% (sisään 10819544 tavua; ulos 4373878 tavua; 1129636 koodia). Pakkaussuhde: 2.47:1
+testdata.lz78/IP-Masquerade-HOWTO: 65% (sisään 708351 tavua; ulos 243709 tavua; 80214 koodia). Pakkaussuhde: 2.91:1
+testdata.lz78/urandom:         -12% (sisään 1000000 tavua; ulos 1127176 tavua; 354389 koodia). Pakkaussuhde: 0.89:1
+testdata.lz78/zero:            99% (sisään 1000000 tavua; ulos 3729 tavua; 1414 koodia). Pakkaussuhde: 268.17:1
+3.65user 0.06system 0:03.93elapsed 94%CPU (0avgtext+0avgdata 742896maxresident)k
+88inputs+19440outputs (0major+47468minor)pagefaults 0swaps
