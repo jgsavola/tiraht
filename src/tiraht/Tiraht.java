@@ -2,6 +2,7 @@ package tiraht;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import tiraht.lz78.LZ78ByteTrieCompressor;
@@ -189,9 +190,15 @@ public class Tiraht {
                 if (outputFile != null)
                     bytesWritten = outputFile.length();
 
-                System.err.println("" + (bytesRead - bytesWritten)*100 / bytesRead
-                        + "% (sisään " + bytesRead + " tavua; ulos "
-                        + tokensWritten + " koodia pakattuna " + bytesWritten + " tavuun). Pakkaussuhde: " + (float)bytesRead / bytesWritten + ":1");
+                if (verbose) {
+                    System.err.printf(Locale.ROOT,
+                            "%d%% (sisään %d tavua; ulos %d tavua; %d koodia). Pakkaussuhde: %.2f:1\n",
+                            (bytesRead - bytesWritten)*100 / bytesRead,
+                            bytesRead,
+                            bytesWritten,
+                            tokensWritten,
+                            (float)bytesRead / bytesWritten);
+                }
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
