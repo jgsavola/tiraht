@@ -8,6 +8,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import org.junit.*;
+import tiraht.lz78.LZ78Compressor.DictFillUpStrategy;
 
 /**
  * Testaa kompressoidun datan purkamista.
@@ -80,7 +81,7 @@ public class LZ78HashMapDecompressorTest {
 
         {
             String sourceStr = "a date with a date";
-            LZ78HashMapDecompressor decompressor1 = new LZ78HashMapDecompressor(1, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78HashMapDecompressor decompressor1 = new LZ78HashMapDecompressor(1, DictFillUpStrategy.Reset);
             decoder = new LZ78FromIteratorDecoder(expectedWithResetAndDictSizes1And2().iterator());
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -104,7 +105,7 @@ public class LZ78HashMapDecompressorTest {
 
         {
             String sourceStr = "a date with a date";
-            LZ78HashMapDecompressor decompressor6 = new LZ78HashMapDecompressor(6, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78HashMapDecompressor decompressor6 = new LZ78HashMapDecompressor(6, DictFillUpStrategy.Reset);
             decoder = new LZ78FromIteratorDecoder(expectedWithResetAndDictSize6().iterator());
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -132,7 +133,7 @@ public class LZ78HashMapDecompressorTest {
                 + " peeped into the book her sister was reading, but it had no"
                 + "pictures or conversations in it, `and what is the use of a book,'"
                 + "thought Alice `without pictures or conversation?'";
-            LZ78HashMapDecompressor decompressor6 = new LZ78HashMapDecompressor(16, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78HashMapDecompressor decompressor6 = new LZ78HashMapDecompressor(16, DictFillUpStrategy.Reset);
             decoder = new LZ78FromIteratorDecoder(expectedWithResetDictSize16().iterator());
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -156,7 +157,7 @@ public class LZ78HashMapDecompressorTest {
 
         {
             String sourceStr = "a date with a date";
-            LZ78HashMapDecompressor decompressor2 = new LZ78HashMapDecompressor(2, LZ78ByteTrieCompressor.DictFillUpStrategy.Reset);
+            LZ78HashMapDecompressor decompressor2 = new LZ78HashMapDecompressor(2, DictFillUpStrategy.Reset);
             decoder = new LZ78FromIteratorDecoder(expectedWithResetAndDictSizes1And2().iterator());
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();
