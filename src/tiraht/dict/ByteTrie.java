@@ -12,11 +12,8 @@ import java.util.List;
  */
 public class ByteTrie implements Trie {
     private byte nodeKey;
-    private boolean isValid;
     private Integer value;
 
-    int numChildren;
-    int childrenArraySize;
     private ByteTrie[] children;
 
     /**
@@ -33,10 +30,7 @@ public class ByteTrie implements Trie {
      * Luo uusi <code>ByteTrie</code>.
      */
     public ByteTrie() {
-        this.isValid = false;
-        this.numChildren = 0;
-        this.childrenArraySize = 1;
-        this.children = new ByteTrie[childrenArraySize];
+        this.children = new ByteTrie[1];
     }
 
     /**
@@ -57,19 +51,42 @@ public class ByteTrie implements Trie {
      * @param value Lisättävä arvo.
      */
     public void insert(Iterator<Byte> key, Integer value) {
-        if (!key.hasNext()) {
-            this.value = value;
-            this.isValid = true;
-            return;
-        }
+        ByteTrie node = this;
 
-        Byte b = key.next();
-        ByteTrie child = findChild(b);
-        if (child == null) {
-            child = new ByteTrie(b);
-            addChild(child);
+        while (true) {
+            if (!key.hasNext()) {
+                node.value = value;
+                return;
+            }
+
+            byte b = key.next();
+            ByteTrie child = node.findChild(b);
+            if (child == null) {
+                child = new ByteTrie(b);
+                node.addChild(child);
+            }
+            node = child;
         }
-        child.insert(key, value);
+    }
+
+    /**
+     * Lisää arvo <code>value</code> avaimella <code>key</code>.
+     *
+     * @param key Avain tavutaulukkona.
+     * @param value Lisättävä arvo.
+     */
+    public void insert(byte[] key, Integer value) {
+        ByteTrie node = this;
+
+        for (byte b : key) {
+            ByteTrie child = node.findChild(b);
+            if (child == null) {
+                child = new ByteTrie(b);
+                node.addChild(child);
+            }
+            node = child;
+        }
+        node.value = value;
     }
 
     /**
@@ -88,7 +105,7 @@ public class ByteTrie implements Trie {
      * @param key Avain tavuna.
      * @param value Lisättävä arvo.
      */
-    public void insert(Byte key, Integer value) {
+    public void insert(byte key, Integer value) {
         ByteTrie child = findChild(key);
         if (child == null) {
             child = new ByteTrie(key);
@@ -96,7 +113,6 @@ public class ByteTrie implements Trie {
         } else {
             child.nodeKey = key;
         }
-        child.isValid = true;
         child.value = value;
     }
 
@@ -106,18 +122,19 @@ public class ByteTrie implements Trie {
      * @param key Avain.
      * @return Lapsisolmun indeksi tai -1, jos solmua ei löydy.
      */
-    private int binarySearch(Byte key) {
+    private int binarySearch(byte key) {
         int left = 0;
-        int right = numChildren - 1;
+        int right = children.length - 1;
 
         while (right >= left) {
             int i = (left + right) / 2;
-            if (key == children[i].nodeKey)
-                return i;
-            if (key > children[i].nodeKey) {
+
+            if (children[i] == null || key < children[i].nodeKey) {
+                right = i - 1;
+            } else if (key > children[i].nodeKey) {
                 left = i + 1;
             } else {
-                right = i - 1;
+                return i;
             }
         }
 
@@ -130,7 +147,7 @@ public class ByteTrie implements Trie {
      * @param key Avain tavumuodossa.
      * @return Lapsisolmu tai <code>null</code>.
      */
-    private ByteTrie findChild(Byte key) {
+    private ByteTrie findChild(byte key) {
         int i = binarySearch(key);
         if (i == -1)
             return null;
@@ -157,19 +174,26 @@ public class ByteTrie implements Trie {
      * @param child Lisättävä lapsisolmu.
      */
     private void addChild(ByteTrie child) {
-        if (numChildren == childrenArraySize) {
-            childrenArraySize *= 2;
-            ByteTrie[] newArray = new ByteTrie[childrenArraySize];
-            System.arraycopy(children, 0, newArray, 0, numChildren);
+        int firstFreeIndex = 0;
+        for (int i = children.length - 1; i >= 0; i--) {
+            if (children[i] != null) {
+                firstFreeIndex = i + 1;
+                break;
+            }
+        }
+
+        if (firstFreeIndex == children.length) {
+            int newLength = children.length * 2;
+            ByteTrie[] newArray = new ByteTrie[newLength];
+            System.arraycopy(children, 0, newArray, 0, children.length);
             children = newArray;
         }
-        children[numChildren] = child;
-        for (int i = numChildren; i > 0 && children[i].nodeKey < children[i - 1].nodeKey; i--) {
+        children[firstFreeIndex] = child;
+        for (int i = firstFreeIndex; i > 0 && children[i].nodeKey < children[i - 1].nodeKey; i--) {
             ByteTrie tmp = children[i];
             children[i] = children[i - 1];
             children[i - 1] = tmp;
         }
-        numChildren++;
     }
 
     /**
@@ -189,18 +213,20 @@ public class ByteTrie implements Trie {
      * @return Löydetty arvo tai <code>null</code>.
      */
     public Integer search(Iterator<Byte> key) {
-        if (!key.hasNext()) {
-            if (isValid)
-                return value;
-            return null;
+        ByteTrie node = this;
+
+        while (true) {
+            if (!key.hasNext()) {
+                return node.value;
+            }
+
+            byte b = key.next();
+            ByteTrie child = node.findChild(b);
+            if (child == null) {
+                return null;
+            }
+            node = child;
         }
-
-        byte b = key.next();
-        ByteTrie child = findChild(b);
-        if (child == null)
-            return null;
-
-        return child.search(key);
     }
 
     /**
@@ -213,7 +239,7 @@ public class ByteTrie implements Trie {
      */
     public ByteTrie retrieve(Iterator<Byte> key) {
         if (!key.hasNext()) {
-            if (isValid)
+            if (value != null)
                 return this;
             return null;
         }
@@ -234,7 +260,7 @@ public class ByteTrie implements Trie {
      * @param key Avain tavuna.
      * @return Löydetty solmu tai <code>null</code>.
      */
-    public ByteTrie retrieve(Byte key) {
+    public ByteTrie retrieve(byte key) {
         return findChild(key);
     }
 }
