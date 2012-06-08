@@ -39,9 +39,9 @@ huomattavasti, kun lisäsin uuden metodin
 
   ByteTrie retrieve(byte key)
 
-Koska avainta haetaan iteratiivisesti kasvattaen avainta loppupäästä,
-voidaan hakua jatkaa siitä ByteTrien haarasta, johon edellinen haku
-päättyi. Tämä korjasi pahimman suorituskykyongelman.
+Koska avainta haetaan iteratiivisesti kasvattaen hakuavainta
+loppupäästä, voidaan hakua jatkaa siitä ByteTrien haarasta, johon
+edellinen haku päättyi. Tämä korjasi pahimman suorituskykyongelman.
 
 Ensimmäisessä ByteTrie-toteutuksessa lapsisolmujen säilytykseen käytin
 javan TreeMap-rakennetta. Korvasin TreeMapin seuraavaksi
@@ -61,6 +61,7 @@ taulukkoon. Tällöin lisäämisen kuoletetuksi aikavaativuudes kasvoi
 luokkaan O(n), mutta hakemisen puolestaan laski luokkaan O(log n).
 Suorituskyvyn kasvu oli samaa luokkaa kuin edellisessä vaiheessa (n.
 10% koko ohjelma, pelkkä LZ78 (arviolta) huomattavasti enemmän).
+
 
 
 Kompressoidun datan koodaus
@@ -88,7 +89,7 @@ testiaineistolla tehtyjen kokeilujen perusteella LZ78 tuottamien
 koodien todennäköisyys näyttää pienenenevän logaritmisesti
 etuliiteindeksin funktiona (ks. histogrammi_alice.png ja
 histogrammi_emacs.png). Hyvät parametrit testitiedostojen koodaukseen
-löytyi kokeilemalla.
+löytyivät kokeilemalla.
 
 
 Luokkarakenne
@@ -127,8 +128,11 @@ LZ78TokenWriter
   |
   -- LZ78ToArrayListEncoder (Tulostus: ArrayList<LZ78Token>-rakenne.)
   |
+  |
   -- LZ78GeneralUnaryEncoder (Koodaus "General Unary"-menetelmällä,
-                              kirjoitetaan tulostusvirtaan.)
+  |                           kirjoitetaan tulostusvirtaan.)
+  |
+  -- LZ78NullEncoder (Koodeilla ei tehdä mitään.)
 
 LZ78Decompressor
   |
@@ -136,7 +140,7 @@ LZ78Decompressor
 
 LZ78TokenReader
   |
-  -- LZ78FromArrayListDecoder (Luetaan ArrayList<LZ78Token>-rakenteesta.)
+  -- LZ78FromIteratorDecoder (Luetaan Iterator<LZ78Token>-rakenteesta.)
   |
   -- LZ78GeneralUnaryDecoder (Luetaan "General Unary"-menetelmällä
                               koodattua bittivirtaa.)

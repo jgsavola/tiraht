@@ -1,8 +1,6 @@
 LZ78-(de)kompressorin käyttöohje
 ================================
 
-Varoitus! Ohjelma kirjoittaa kaikki tulosteet stdout:iin!
-
 Käyttö:
 
   java -jar dist/tiraht.jar [-d] [muut optiot] tiedosto1 [tiedosto2 ...]
@@ -10,7 +8,16 @@ Käyttö:
 Optiot:
 
   -d
-	Purkumoodi (oletus: pakkaus).
+        Purkumoodi (oletus: pakkaus).
+
+  -f
+        Tulosdata kirjoitetaan stdout:iin, ei tiedostoon.
+
+  -v
+        Tulosta tietoja ohjelman etenemisestä.
+
+  --no-delete
+        Lähtötiedostoa ei poisteta.
 
   --dict-size DICTSIZE
         Sanakirjan maksimikoko tavuissa. Oletus: -1 (ääretön).
@@ -18,10 +25,10 @@ Optiot:
   --dict-fill-up-strategy STRATEGY
         Strategia sanakirjan koon hallitsemiseksi:
             DoNothing (oletus) -- Älä tee mitään.
-	    Freeze             -- "Jäädytä" sanakirja. Uusi sanoja ei lisätä.
-	    Reset              -- Alusta uusi tyhjä sanakirja.
+            Freeze             -- "Jäädytä" sanakirja. Uusi sanoja ei lisätä.
+            Reset              -- Alusta uusi tyhjä sanakirja.
 
-	Huom! Strategioiden toteutus on kesken, mahdollisesti rikki.
+        Huom! Strategioiden toteutus on kesken, mahdollisesti rikki.
 
   --general-unary-params START STEP STOP
         Ohjelman käyttävän bittikoodauksen ("General Unary") parametrit:
@@ -32,6 +39,18 @@ Optiot:
 
         Oletus: 12 1 30. Nämä parametrit toimivat hyvin ainakin
         tiedostoille, joiden koko on kymmenistä kiloista megatavuihin.
+
+  --test-compress
+        Testataan vain LZ78-algoritmia ja jätetään bittikoodaus tekemättä.
+
+  --test-bytetrie-num-children
+        Testataan ByteTrie-rakenteen suorityskykyä. Tulosteena on
+        taulukko, jossa on suoritusaikoja trie-rakenteen eri haarautumisasteilla.
+
+  --test-bytetrie-phase-length
+        Testataan ByteTrie-rakenteen suorityskykyä. Tulosteena on
+        taulukko, jossa on suoritusaikoja eripituisilla hakufraaseilla.
+
 
 Esimerkkejä:
 
@@ -62,3 +81,43 @@ Vertaile pakkaustehoa vaihtelemalla koodauksen parametreja:
   81595 alice29.start12.lz78
   84496 alice29.start14.lz78
   90913 alice29.start16.lz78
+
+Testataan kompressiota erilaisilla dokumenteilla:
+
+  
+
+Testataan ainoastaan lz78-algoritmia (ei tehdä bittipakkausta eikä
+kirjoitusta):
+
+  $ /usr/bin/time java -jar dist/tiraht.jar --no-delete --test-compress -v testdata/*
+  testdata/alice29.txt:          (sisään 152089 tavua; ulos 29091 koodia).
+  testdata/canterbury on hakemisto. Ohitetaan.
+  testdata/cantrbry.tar.gz:      (sisään 739071 tavua; ulos 255194 koodia).
+  testdata/changelog:            (sisään 8035435 tavua; ulos 633062 koodia).
+  testdata/emacs:                (sisään 10819480 tavua; ulos 1127696 koodia).
+  testdata/openstreetmap_helsinki.ppm: (sisään 1386891 tavua; ulos 204059 koodia).
+  testdata/openstreetmap_suomi.ppm: (sisään 1376676 tavua; ulos 58861 koodia).
+  testdata/urandom:              (sisään 1000000 tavua; ulos 354383 koodia).
+  testdata/zero:                 (sisään 1000000 tavua; ulos 1414 koodia).
+  2.06user 0.05system 0:02.01elapsed 105%CPU (0avgtext+0avgdata 487552maxresident)k
+  0inputs+0outputs (0major+31140minor)pagefaults 0swaps
+
+
+Testataan ByteTrie-rakenteen suorituskykyä (fraasin pituus):
+
+  $ /usr/bin/time java -jar dist/tiraht.jar --test-bytetrie-phrase-length >doc/trie_suorituskyky_fraasin_pituus.csv
+  305.79user 0.90system 3:59.63elapsed 127%CPU (0avgtext+0avgdata 11373712maxresident)k
+  0inputs+160outputs (0major+730563minor)pagefaults 0swaps
+
+  $ sh doc/trie_suorituskyky_fraasin_pituus.sh
+  $ display doc/trie_suorituskyky_fraasin_pituus.png
+
+Testataan ByteTrie-rakenteen suorituskykyä (trien haarautumisaste):
+
+  $ /usr/bin/time java -jar dist/tiraht.jar --test-bytetrie-num-children >doc/trie_suorituskyky_lapsisolmut.csv
+  297.79user 1.23system 3:53.44elapsed 128%CPU (0avgtext+0avgdata 9778464maxresident)k
+  0inputs+64outputs (0major+888318minor)pagefaults 0swaps
+
+  $ sh doc/trie_suorituskyky_lapsisolmut.sh
+  $ display doc/trie_suorituskyky_lapsisolmut.png
+
