@@ -1,0 +1,88 @@
+LZ78-algoritmin testaus
+=======================
+
+Yksikkötestaus
+--------------
+
+Harjoitustyön kehityksessä käytettiin JUnit-testausta. Testejä on
+kaikilla luokilla, joilla on merkittävää toiminnallisuutta. Testien
+kattavuudessa olisi paljon parantamisen varaa, mutta kehitystyön
+kannalta testien määrä on ollut riittävä: pieniä ja suuriakin
+muutoksia on uskaltanut tehdä, koska yksikkötestit ovat olleet
+riittävän kattavat.
+
+
+Pakkausteho
+-----------
+
+Tässä projektissa suorituskyvyllä on kaksi ulottuvuutta: pakkausteho
+ja suoritusaika.
+
+LZ78
+----
+
+$ /usr/bin/time java -jar dist/tiraht.jar -v testdata.lz78/*
+testdata.lz78/alice29.txt:     46% (sisään 152089 tavua; ulos 81609 tavua; 29091 koodia). Pakkaussuhde: 1.86:1
+testdata.lz78/cantrbry.tar.gz: -8% (sisään 739071 tavua; ulos 802174 tavua; 255194 koodia). Pakkaussuhde: 0.92:1
+testdata.lz78/changelog:       70% (sisään 8035435 tavua; ulos 2352045 tavua; 633062 koodia). Pakkaussuhde: 3.42:1
+testdata.lz78/dpkg.status:     58% (sisään 2326872 tavua; ulos 957532 tavua; 284443 koodia). Pakkaussuhde: 2.43:1
+testdata.lz78/emacs:           59% (sisään 10819480 tavua; ulos 4377375 tavua; 1127696 koodia). Pakkaussuhde: 2.47:1
+testdata.lz78/IP-Masquerade-HOWTO: 65% (sisään 708351 tavua; ulos 243709 tavua; 80214 koodia). Pakkaussuhde: 2.91:1
+testdata.lz78/openstreetmap_helsinki.ppm: 51% (sisään 1386891 tavua; ulos 678558 tavua; 204059 koodia). Pakkaussuhde: 2.04:1
+testdata.lz78/openstreetmap_suomi.ppm: 87% (sisään 1376676 tavua; ulos 175202 tavua; 58861 koodia). Pakkaussuhde: 7.86:1
+testdata.lz78/urandom:         -12% (sisään 1000000 tavua; ulos 1127214 tavua; 354383 koodia). Pakkaussuhde: 0.89:1
+testdata.lz78/zero:            99% (sisään 1000000 tavua; ulos 3729 tavua; 1414 koodia). Pakkaussuhde: 268.17:1
+3.36user 0.10system 0:03.14elapsed 110%CPU (0avgtext+0avgdata 710848maxresident)k
+0inputs+21120outputs (0major+45404minor)pagefaults 0swaps
+
+COMPRESS
+--------
+
+$ /usr/bin/time compress -v -f testdata.compress/*
+testdata.compress/alice29.txt:  -- replaced with testdata.compress/alice29.txt.Z Compression: 59.07%
+testdata.compress/cantrbry.tar.gz:  -- replaced with testdata.compress/cantrbry.tar.gz.Z Compression: -24.38%
+testdata.compress/changelog:  -- replaced with testdata.compress/changelog.Z Compression: 75.00%
+testdata.compress/dpkg.status:  -- replaced with testdata.compress/dpkg.status.Z Compression: 64.06%
+testdata.compress/emacs:  -- replaced with testdata.compress/emacs.Z Compression: 59.36%
+testdata.compress/IP-Masquerade-HOWTO:  -- replaced with testdata.compress/IP-Masquerade-HOWTO.Z Compression: 73.73%
+testdata.compress/openstreetmap_helsinki.ppm:  -- replaced with testdata.compress/openstreetmap_helsinki.ppm.Z Compression: 65.37%
+testdata.compress/openstreetmap_suomi.ppm:  -- replaced with testdata.compress/openstreetmap_suomi.ppm.Z Compression: 91.40%
+testdata.compress/urandom:  -- replaced with testdata.compress/urandom.Z Compression: -23.82%
+testdata.compress/zero:  -- replaced with testdata.compress/zero.Z Compression: 99.81%
+0.47user 0.03system 0:00.51elapsed 99%CPU (0avgtext+0avgdata 5056maxresident)k
+0inputs+20120outputs (0major+365minor)pagefaults 0swaps
+
+GZIP
+----
+
+$ /usr/bin/time gzip -v -f testdata.gzip/*
+testdata.gzip/alice29.txt:	 64.2% -- replaced with testdata.gzip/alice29.txt.gz
+testdata.gzip/cantrbry.tar.gz:	 14.4% -- replaced with testdata.gzip/cantrbry.tar.gz.gz
+testdata.gzip/changelog:	 81.4% -- replaced with testdata.gzip/changelog.gz
+testdata.gzip/dpkg.status:	 71.2% -- replaced with testdata.gzip/dpkg.status.gz
+testdata.gzip/emacs:	 75.0% -- replaced with testdata.gzip/emacs.gz
+testdata.gzip/IP-Masquerade-HOWTO:	 79.3% -- replaced with testdata.gzip/IP-Masquerade-HOWTO.gz
+testdata.gzip/openstreetmap_helsinki.ppm:	 71.4% -- replaced with testdata.gzip/openstreetmap_helsinki.ppm.gz
+testdata.gzip/openstreetmap_suomi.ppm:	 90.8% -- replaced with testdata.gzip/openstreetmap_suomi.ppm.gz
+testdata.gzip/urandom:	 -0.0% -- replaced with testdata.gzip/urandom.gz
+testdata.gzip/zero:	 99.9% -- replaced with testdata.gzip/zero.gz
+0.79user 0.01system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 4368maxresident)k
+0inputs+14144outputs (0major+330minor)pagefaults 0swaps
+
+$ du -c testdata.{orig,lz78,compress,gzip}
+26928	testdata.orig
+10564	testdata.lz78
+10064	testdata.compress
+7076	testdata.gzip
+
+Tuloksia
+--------
+
+LZ78-toteutuksen nopeus tällä testidatalla ja -koneella on n. 1/7
+compress-ohjelman nopeudesta ja n. 1/4 gzip-ohjelman nopeudesta.
+
+Pakkausteho on hieman huonompi kuin compress-ohjelmalla ja
+huomattavasti huonompi kuin gzip-ohjelmalla. Tässä testissä tosin
+vaikuttaa se, että compress ja gzip pakotettiin pakkaamaan sellaisia
+tiedostoja, jotka ne normaalitoiminnassa jättäisivät pakkaamatta
+(urandom, cantrbry.tar.gz).
