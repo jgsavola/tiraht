@@ -319,3 +319,50 @@ testdata.lz78/urandom:         -12% (sisään 1000000 tavua; ulos 1127176 tavua;
 testdata.lz78/zero:            99% (sisään 1000000 tavua; ulos 3729 tavua; 1414 koodia). Pakkaussuhde: 268.17:1
 3.65user 0.06system 0:03.93elapsed 94%CPU (0avgtext+0avgdata 742896maxresident)k
 88inputs+19440outputs (0major+47468minor)pagefaults 0swaps
+
+
+==== treemap 2e3a7ce2d2edba13b19bb041ef3c9bf580569a63 ====
+
+jonne@kuurna:~/tiraht$ /usr/bin/time java -jar dist/tiraht.jar --no-delete --test-compress -v `ls -d testdata.lz78/* | grep -v 'lz78$'`
+testdata.lz78/alice29.txt:     (sisään 152089 tavua; ulos 29091 koodia).
+testdata.lz78/canterbury on hakemisto. Ohitetaan.
+testdata.lz78/cantrbry.tar.gz: (sisään 739071 tavua; ulos 255194 koodia).
+testdata.lz78/changelog:       (sisään 8035435 tavua; ulos 633062 koodia).
+testdata.lz78/dpkg.status:     (sisään 2326872 tavua; ulos 284443 koodia).
+testdata.lz78/emacs:           (sisään 10819480 tavua; ulos 1127696 koodia).
+testdata.lz78/IP-Masquerade-HOWTO: (sisään 708351 tavua; ulos 80214 koodia).
+testdata.lz78/urandom:         (sisään 1000000 tavua; ulos 354383 koodia).
+testdata.lz78/zero:            (sisään 1000000 tavua; ulos 1414 koodia).
+3.12user 0.13system 0:02.45elapsed 132%CPU (0avgtext+0avgdata 1735760maxresident)k
+0inputs+0outputs (0major+109337minor)pagefaults 0swaps
+
+==== lineaarinen haku 5e7ad13992036cc7f1c8a0759332e2ba6e91f63a ====
+
+jonne@kuurna:~/tiraht$ /usr/bin/time java -jar dist/tiraht.jar --no-delete --test-compress -v `ls -d testdata.lz78/* | grep -v 'lz78$'`
+testdata.lz78/alice29.txt:     (sisään 152089 tavua; ulos 29091 koodia).
+testdata.lz78/canterbury on hakemisto. Ohitetaan.
+testdata.lz78/cantrbry.tar.gz: (sisään 739071 tavua; ulos 255194 koodia).
+testdata.lz78/changelog:       (sisään 8035435 tavua; ulos 633062 koodia).
+testdata.lz78/dpkg.status:     (sisään 2326872 tavua; ulos 284443 koodia).
+testdata.lz78/emacs:           (sisään 10819480 tavua; ulos 1127696 koodia).
+testdata.lz78/IP-Masquerade-HOWTO: (sisään 708351 tavua; ulos 80214 koodia).
+testdata.lz78/urandom:         (sisään 1000000 tavua; ulos 354383 koodia).
+testdata.lz78/zero:            (sisään 1000000 tavua; ulos 1414 koodia).
+2.72user 0.03system 0:02.53elapsed 108%CPU (0avgtext+0avgdata 649520maxresident)k
+0inputs+0outputs (0major+41386minor)pagefaults 0swaps
+
+==== binäärihaku ef1e194167b7e65bce0543e3116a25e8a8263813 ====
+
+jonne@kuurna:~/tiraht$ /usr/bin/time java -jar dist/tiraht.jar --no-delete --test-compress -v `ls -d testdata.lz78/* | grep -v 'lz78$'`
+testdata.lz78/alice29.txt:     (sisään 152089 tavua; ulos 29091 koodia).
+testdata.lz78/canterbury on hakemisto. Ohitetaan.
+testdata.lz78/cantrbry.tar.gz: (sisään 739071 tavua; ulos 255194 koodia).
+testdata.lz78/changelog:       (sisään 8035435 tavua; ulos 633062 koodia).
+testdata.lz78/dpkg.status:     (sisään 2326872 tavua; ulos 284443 koodia).
+testdata.lz78/emacs:           (sisään 10819480 tavua; ulos 1127696 koodia).
+testdata.lz78/IP-Masquerade-HOWTO: (sisään 708351 tavua; ulos 80214 koodia).
+testdata.lz78/urandom:         (sisään 1000000 tavua; ulos 354383 koodia).
+testdata.lz78/zero:            (sisään 1000000 tavua; ulos 1414 koodia).
+2.24user 0.06system 0:02.06elapsed 111%CPU (0avgtext+0avgdata 653744maxresident)k
+0inputs+0outputs (0major+41543minor)pagefaults 0swaps
+
