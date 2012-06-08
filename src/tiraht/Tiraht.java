@@ -32,10 +32,15 @@ public class Tiraht {
 
     private static boolean verbose = false;
 
+    private static void testByteTrie() {
+        TestByteTrie test = new TestByteTrie();
+    }
+
     private enum Mode {
         Compress,
         Decompress,
-        TestCompress};
+        TestCompress,
+        TestByteTrie};
 
     private static Mode mode = Mode.Compress;
 
@@ -84,9 +89,10 @@ public class Tiraht {
                 compressFiles();
             else if (mode == Mode.Decompress)
                 decompressFiles();
-            else if (mode == Mode.TestCompress) {
+            else if (mode == Mode.TestCompress)
                 testCompress();
-            }
+            else if (mode == Mode.TestByteTrie)
+                testByteTrie();
         } catch (Exception ex) {
             Logger.getLogger(Tiraht.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -114,6 +120,8 @@ public class Tiraht {
                 mode = Mode.Decompress;
             } else if ("--test-compress".equals(args[i])) {
                 mode = Mode.TestCompress;
+            } else if ("--test-bytetrie".equals(args[i])) {
+                mode = Mode.TestByteTrie;
             } else if ("-f".equals(args[i])) {
                 forceOutput = true;
             } else if ("-v".equals(args[i])) {
