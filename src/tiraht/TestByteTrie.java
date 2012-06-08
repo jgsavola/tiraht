@@ -1,6 +1,5 @@
 package tiraht;
 
-import java.util.Arrays;
 import tiraht.dict.ByteTrie;
 import tiraht.util.ByteArray;
 
@@ -11,21 +10,83 @@ import tiraht.util.ByteArray;
  */
 public class TestByteTrie {
     private ByteTrie trie;
+    private ByteArray ba;
 
     public TestByteTrie() {
-        trie = new ByteTrie();
-        byte[] bytes = new byte[4];
-        ByteArray ba = new ByteArray(bytes);
-        for (long i = 0; i < 10000000L; i++) {
-            bytes[3] = (byte)((i >> 24) & 0xff);
-            bytes[2] = (byte)((i >> 16) & 0xff);
-            bytes[1] = (byte)((i >> 8) & 0xff);
-            bytes[0] = (byte)((i >> 0) & 0xff);
-            trie.insert(ba.iterator(), (int)i);
-            if (i % 1000000L == 0L)
-                System.out.println("i " + i);
-        }
+    }
 
-        System.out.println("Hello " + trie.search(ba.iterator()));
+    /**
+     * Testaa vaihtelemalla lapsisolmujen määrää (trie:n haarautumisastetta).
+     */
+    public void testNumChildren() {
+        System.out.println("#nchldr\ttime");
+        int max = 10000000;
+        for (int m = 1; m <= 256; m *= 2) {
+            for (int n = 6; n < 7; n++) {
+                trie = new ByteTrie();
+                System.gc();System.gc();
+
+                testInsert(m, n, max);
+                {
+                    long start = System.nanoTime();
+                    testSearch(m, n, max);
+                    long stop = System.nanoTime();
+                    System.out.printf("%d\t%.3f\n", m,
+                        (stop - start) / 1000000000.0);
+                }
+            }
+        }
+    }
+
+    /**
+     * Testaa vaihtelemalla fraasin pituutta.
+     */
+    public void testPhraseLength() {
+        System.out.println("#phrlen\ttime / 1m searches");
+        int max = 1000000;
+        int m = 256;
+        for (int n = 1; n < 32; n++) {
+            trie = new ByteTrie();
+            System.gc();System.gc();
+
+            testInsert(m, n, max);
+            {
+                long start = System.nanoTime();
+                testSearch(m, n, max);
+                long stop = System.nanoTime();
+                System.out.printf("%d\t%.3f\n", n,
+                    (stop - start) / 1000000000.0);
+            }
+        }
+    }
+
+    private void testInsert(int m, int n) {
+        testInsert(m, n, (int)Math.pow(m, n));
+    }
+
+    private void testInsert(int m, int n, long max) {
+        byte[] bytes = new byte[n];
+        for (int i = 0; i < max; i++) {
+            ba = new ByteArray(bytes);
+            for (int j = 0; j < n; j++) {
+                bytes[j] = (byte) ((i / (int)Math.pow(m, j)) % m);
+            }
+            trie.insert(ba.iterator(), i);
+        }
+    }
+
+    private void testSearch(int m, int n) {
+        testInsert(m, n, (int)Math.pow(m, n));
+    }
+
+    private void testSearch(int m, int n, long max) {
+        byte[] bytes = new byte[n];
+        for (int i = 0; i < max; i++) {
+            ba = new ByteArray(bytes);
+            for (int j = 0; j < n; j++) {
+                bytes[j] = (byte) ((i / (int)Math.pow(m, j)) % m);
+            }
+            int ret = trie.search(ba.iterator());
+        }
     }
 }
