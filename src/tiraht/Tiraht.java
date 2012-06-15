@@ -228,7 +228,7 @@ public class Tiraht {
             File inputFile = new File(filename);
             boolean removeInputFile = false;
             try {
-                InputStream is;
+                InputStream is = System.in;
                 OutputStream os;
 
                 if (inputFile.isDirectory()) {
@@ -241,12 +241,15 @@ public class Tiraht {
                 }
 
                 if ("-".equals(filename)) {
-                    is = System.in;
                     os = System.out;
                 } else {
-                    String outputFileName = filename.replaceFirst("\\.lz78$", "");
                     is = new BufferedInputStream(new FileInputStream(inputFile));
-                    os = new BufferedOutputStream(new FileOutputStream(outputFileName));
+                    if (!forceOutput) {
+                        String outputFileName = filename.replaceFirst("\\.lz78$", "");
+                        os = new BufferedOutputStream(new FileOutputStream(outputFileName));
+                    } else {
+                        os = System.out;
+                    }
                     removeInputFile = true;
                 }
 
