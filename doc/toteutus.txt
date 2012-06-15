@@ -136,7 +136,7 @@ LZ78TokenWriter
 
 LZ78Decompressor
   |
-  -- LZ78HashMapDecompressor (Dekompressointi HashMap-rakenteen avulla.)
+  -- LZ78HashMapDecompressor (Dekompressointi hajautustaulukon avulla.)
 
 LZ78TokenReader
   |
