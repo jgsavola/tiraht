@@ -12,68 +12,153 @@ muutoksia on uskaltanut tehdä, koska yksikkötestit ovat olleet
 riittävän kattavat.
 
 
-Pakkausteho
------------
+Vertailu muihin pakkausohjelmiin
+--------------------------------
 
 Tässä projektissa suorituskyvyllä on kaksi ulottuvuutta: pakkausteho
 ja suoritusaika.
 
-LZ78
-----
+Testiskripti on ajettu muistipohjaisen tiedostojärjestelmän (tmpfs)
+päällä, joten IO:n osuus suoritusajoissa ei ole merkittävä.
 
-$ /usr/bin/time java -jar dist/tiraht.jar -v testdata.lz78/*
-testdata.lz78/alice29.txt:     46% (sisään 152089 tavua; ulos 81609 tavua; 29091 koodia). Pakkaussuhde: 1.86:1
-testdata.lz78/cantrbry.tar.gz: -8% (sisään 739071 tavua; ulos 802174 tavua; 255194 koodia). Pakkaussuhde: 0.92:1
-testdata.lz78/changelog:       70% (sisään 8035435 tavua; ulos 2352045 tavua; 633062 koodia). Pakkaussuhde: 3.42:1
-testdata.lz78/dpkg.status:     58% (sisään 2326872 tavua; ulos 957532 tavua; 284443 koodia). Pakkaussuhde: 2.43:1
-testdata.lz78/emacs:           59% (sisään 10819480 tavua; ulos 4377375 tavua; 1127696 koodia). Pakkaussuhde: 2.47:1
+Testeissä suoritin: Intel(R) Core(TM) i5-2400 CPU @ 3.10GHz
+
+$ sh ~/tiraht/test.sh
+========================
+Pakkaus: lz78
+========================
 testdata.lz78/IP-Masquerade-HOWTO: 65% (sisään 708351 tavua; ulos 243709 tavua; 80214 koodia). Pakkaussuhde: 2.91:1
-testdata.lz78/openstreetmap_helsinki.ppm: 51% (sisään 1386891 tavua; ulos 678558 tavua; 204059 koodia). Pakkaussuhde: 2.04:1
-testdata.lz78/openstreetmap_suomi.ppm: 87% (sisään 1376676 tavua; ulos 175202 tavua; 58861 koodia). Pakkaussuhde: 7.86:1
-testdata.lz78/urandom:         -12% (sisään 1000000 tavua; ulos 1127214 tavua; 354383 koodia). Pakkaussuhde: 0.89:1
+testdata.lz78/alice29.txt:     46% (sisään 152089 tavua; ulos 81609 tavua; 29091 koodia). Pakkaussuhde: 1.86:1
+testdata.lz78/cantrbry.tar.GZIP: -8% (sisään 739071 tavua; ulos 802174 tavua; 255194 koodia). Pakkaussuhde: 0.92:1
+testdata.lz78/changelog:       70% (sisään 8035435 tavua; ulos 2352045 tavua; 633062 koodia). Pakkaussuhde: 3.42:1
+testdata.lz78/cubbli-sunset-in-massai-mara.ppm: 61% (sisään 6912017 tavua; ulos 2675477 tavua; 682827 koodia). Pakkaussuhde: 2.58:1
+testdata.lz78/dpkg.status:     58% (sisään 2326872 tavua; ulos 957532 tavua; 284443 koodia). Pakkaussuhde: 2.43:1
+testdata.lz78/emacs:           59% (sisään 10819544 tavua; ulos 4373878 tavua; 1129636 koodia). Pakkaussuhde: 2.47:1
+testdata.lz78/urandom:         -12% (sisään 1000000 tavua; ulos 1127176 tavua; 354389 koodia). Pakkaussuhde: 0.89:1
 testdata.lz78/zero:            99% (sisään 1000000 tavua; ulos 3729 tavua; 1414 koodia). Pakkaussuhde: 268.17:1
-3.36user 0.10system 0:03.14elapsed 110%CPU (0avgtext+0avgdata 710848maxresident)k
-0inputs+21120outputs (0major+45404minor)pagefaults 0swaps
-
-COMPRESS
---------
-
-$ /usr/bin/time compress -v -f testdata.compress/*
-testdata.compress/alice29.txt:  -- replaced with testdata.compress/alice29.txt.Z Compression: 59.07%
-testdata.compress/cantrbry.tar.gz:  -- replaced with testdata.compress/cantrbry.tar.gz.Z Compression: -24.38%
-testdata.compress/changelog:  -- replaced with testdata.compress/changelog.Z Compression: 75.00%
-testdata.compress/dpkg.status:  -- replaced with testdata.compress/dpkg.status.Z Compression: 64.06%
-testdata.compress/emacs:  -- replaced with testdata.compress/emacs.Z Compression: 59.36%
+4.03user 0.07system 0:03.59elapsed 113%CPU (0avgtext+0avgdata 775424maxresident)k
+0inputs+0outputs (0major+49317minor)pagefaults 0swaps
+========================
+Pakkaus: compress
+========================
 testdata.compress/IP-Masquerade-HOWTO:  -- replaced with testdata.compress/IP-Masquerade-HOWTO.Z Compression: 73.73%
-testdata.compress/openstreetmap_helsinki.ppm:  -- replaced with testdata.compress/openstreetmap_helsinki.ppm.Z Compression: 65.37%
-testdata.compress/openstreetmap_suomi.ppm:  -- replaced with testdata.compress/openstreetmap_suomi.ppm.Z Compression: 91.40%
-testdata.compress/urandom:  -- replaced with testdata.compress/urandom.Z Compression: -23.82%
+testdata.compress/alice29.txt:  -- replaced with testdata.compress/alice29.txt.Z Compression: 59.07%
+testdata.compress/cantrbry.tar.GZIP:  -- replaced with testdata.compress/cantrbry.tar.GZIP.Z Compression: -24.38%
+testdata.compress/changelog:  -- replaced with testdata.compress/changelog.Z Compression: 75.00%
+testdata.compress/cubbli-sunset-in-massai-mara.ppm:  -- replaced with testdata.compress/cubbli-sunset-in-massai-mara.ppm.Z Compression: 73.76%
+testdata.compress/dpkg.status:  -- replaced with testdata.compress/dpkg.status.Z Compression: 64.06%
+testdata.compress/emacs:  -- replaced with testdata.compress/emacs.Z Compression: 60.91%
+testdata.compress/urandom:  -- replaced with testdata.compress/urandom.Z Compression: -23.81%
 testdata.compress/zero:  -- replaced with testdata.compress/zero.Z Compression: 99.81%
-0.47user 0.03system 0:00.51elapsed 99%CPU (0avgtext+0avgdata 5056maxresident)k
-0inputs+20120outputs (0major+365minor)pagefaults 0swaps
-
-GZIP
-----
-
-$ /usr/bin/time gzip -v -f testdata.gzip/*
+0.67user 0.01system 0:00.68elapsed 98%CPU (0avgtext+0avgdata 4960maxresident)k
+0inputs+0outputs (0major+355minor)pagefaults 0swaps
+========================
+Pakkaus: gzip
+========================
+testdata.gzip/IP-Masquerade-HOWTO:	 79.3% -- replaced with testdata.gzip/IP-Masquerade-HOWTO.gz
 testdata.gzip/alice29.txt:	 64.2% -- replaced with testdata.gzip/alice29.txt.gz
-testdata.gzip/cantrbry.tar.gz:	 14.4% -- replaced with testdata.gzip/cantrbry.tar.gz.gz
+testdata.gzip/cantrbry.tar.GZIP:	 14.4% -- replaced with testdata.gzip/cantrbry.tar.GZIP.gz
 testdata.gzip/changelog:	 81.4% -- replaced with testdata.gzip/changelog.gz
+testdata.gzip/cubbli-sunset-in-massai-mara.ppm:	 86.6% -- replaced with testdata.gzip/cubbli-sunset-in-massai-mara.ppm.gz
 testdata.gzip/dpkg.status:	 71.2% -- replaced with testdata.gzip/dpkg.status.gz
 testdata.gzip/emacs:	 75.0% -- replaced with testdata.gzip/emacs.gz
-testdata.gzip/IP-Masquerade-HOWTO:	 79.3% -- replaced with testdata.gzip/IP-Masquerade-HOWTO.gz
-testdata.gzip/openstreetmap_helsinki.ppm:	 71.4% -- replaced with testdata.gzip/openstreetmap_helsinki.ppm.gz
-testdata.gzip/openstreetmap_suomi.ppm:	 90.8% -- replaced with testdata.gzip/openstreetmap_suomi.ppm.gz
 testdata.gzip/urandom:	 -0.0% -- replaced with testdata.gzip/urandom.gz
 testdata.gzip/zero:	 99.9% -- replaced with testdata.gzip/zero.gz
-0.79user 0.01system 0:00.80elapsed 99%CPU (0avgtext+0avgdata 4368maxresident)k
-0inputs+14144outputs (0major+330minor)pagefaults 0swaps
+0.91user 0.01system 0:00.92elapsed 99%CPU (0avgtext+0avgdata 3648maxresident)k
+0inputs+0outputs (0major+275minor)pagefaults 0swaps
+31092	testdata
+12416	testdata.lz78
+11132	testdata.compress
+7532	testdata.gzip
+========================
+Purku: lz78
+========================
+3.08user 0.16system 0:02.52elapsed 128%CPU (0avgtext+0avgdata 1216416maxresident)k
+0inputs+0outputs (0major+76728minor)pagefaults 0swaps
+Purku OK!
+========================
+Purku: compress
+========================
+0.18user 0.00system 0:00.18elapsed 98%CPU (0avgtext+0avgdata 2736maxresident)k
+0inputs+0outputs (0major+216minor)pagefaults 0swaps
+Purku OK!
+========================
+Purku: gzip
+========================
+0.17user 0.02system 0:00.19elapsed 98%CPU (0avgtext+0avgdata 2672maxresident)k
+0inputs+0outputs (0major+213minor)pagefaults 0swaps
+Purku OK!
 
-$ du -c testdata.{orig,lz78,compress,gzip}
-26928	testdata.orig
-10564	testdata.lz78
-10064	testdata.compress
-7076	testdata.gzip
+
+Vertailu sanakirjastrategioilla
+-------------------------------
+
+$ sh ~/tiraht/test_dict_size.sh
+========================
+Pakkaus: unlimited
+========================
+testdata.unlimited/IP-Masquerade-HOWTO: 65% (sisään 708351 tavua; ulos 243709 tavua; 80214 koodia). Pakkaussuhde: 2.91:1
+testdata.unlimited/alice29.txt: 46% (sisään 152089 tavua; ulos 81609 tavua; 29091 koodia). Pakkaussuhde: 1.86:1
+testdata.unlimited/cantrbry.tar.GZIP: -8% (sisään 739071 tavua; ulos 802174 tavua; 255194 koodia). Pakkaussuhde: 0.92:1
+testdata.unlimited/changelog:  70% (sisään 8035435 tavua; ulos 2352045 tavua; 633062 koodia). Pakkaussuhde: 3.42:1
+testdata.unlimited/cubbli-sunset-in-massai-mara.ppm: 61% (sisään 6912017 tavua; ulos 2675477 tavua; 682827 koodia). Pakkaussuhde: 2.58:1
+testdata.unlimited/dpkg.status: 58% (sisään 2326872 tavua; ulos 957532 tavua; 284443 koodia). Pakkaussuhde: 2.43:1
+testdata.unlimited/emacs:      59% (sisään 10819544 tavua; ulos 4373878 tavua; 1129636 koodia). Pakkaussuhde: 2.47:1
+testdata.unlimited/urandom:    -12% (sisään 1000000 tavua; ulos 1127176 tavua; 354389 koodia). Pakkaussuhde: 0.89:1
+testdata.unlimited/zero:       99% (sisään 1000000 tavua; ulos 3729 tavua; 1414 koodia). Pakkaussuhde: 268.17:1
+4.02user 0.10system 0:03.61elapsed 113%CPU (0avgtext+0avgdata 774544maxresident)k
+0inputs+0outputs (0major+49235minor)pagefaults 0swaps
+========================
+Pakkaus: 100k_reset
+========================
+testdata.100k_reset/IP-Masquerade-HOWTO: 65% (sisään 708351 tavua; ulos 243709 tavua; 80214 koodia). Pakkaussuhde: 2.91:1
+testdata.100k_reset/alice29.txt: 46% (sisään 152089 tavua; ulos 81609 tavua; 29091 koodia). Pakkaussuhde: 1.86:1
+testdata.100k_reset/cantrbry.tar.GZIP: -10% (sisään 739071 tavua; ulos 820233 tavua; 282492 koodia). Pakkaussuhde: 0.90:1
+testdata.100k_reset/changelog: 68% (sisään 8035435 tavua; ulos 2542111 tavua; 811998 koodia). Pakkaussuhde: 3.16:1
+testdata.100k_reset/cubbli-sunset-in-massai-mara.ppm: 64% (sisään 6912017 tavua; ulos 2432653 tavua; 766197 koodia). Pakkaussuhde: 2.84:1
+testdata.100k_reset/dpkg.status: 54% (sisään 2326872 tavua; ulos 1061619 tavua; 347699 koodia). Pakkaussuhde: 2.19:1
+testdata.100k_reset/emacs:     63% (sisään 10819544 tavua; ulos 3931594 tavua; 1273621 koodia). Pakkaussuhde: 2.75:1
+testdata.100k_reset/urandom:   -15% (sisään 1000000 tavua; ulos 1156552 tavua; 403390 koodia). Pakkaussuhde: 0.86:1
+testdata.100k_reset/zero:      99% (sisään 1000000 tavua; ulos 3729 tavua; 1414 koodia). Pakkaussuhde: 268.17:1
+2.96user 0.04system 0:02.85elapsed 105%CPU (0avgtext+0avgdata 369584maxresident)k
+0inputs+0outputs (0major+23909minor)pagefaults 0swaps
+========================
+Pakkaus: 100k_freeze
+========================
+testdata.100k_freeze/IP-Masquerade-HOWTO: 65% (sisään 708351 tavua; ulos 243709 tavua; 80214 koodia). Pakkaussuhde: 2.91:1
+testdata.100k_freeze/alice29.txt: 46% (sisään 152089 tavua; ulos 81609 tavua; 29091 koodia). Pakkaussuhde: 1.86:1
+testdata.100k_freeze/cantrbry.tar.GZIP: -9% (sisään 739071 tavua; ulos 806196 tavua; 268285 koodia). Pakkaussuhde: 0.92:1
+testdata.100k_freeze/changelog: 64% (sisään 8035435 tavua; ulos 2841511 tavua; 876186 koodia). Pakkaussuhde: 2.83:1
+testdata.100k_freeze/cubbli-sunset-in-massai-mara.ppm: -25% (sisään 6912017 tavua; ulos 8658509 tavua; 3145209 koodia). Pakkaussuhde: 0.80:1
+testdata.100k_freeze/dpkg.status: 57% (sisään 2326872 tavua; ulos 997169 tavua; 308991 koodia). Pakkaussuhde: 2.33:1
+testdata.100k_freeze/emacs:    38% (sisään 10819544 tavua; ulos 6614812 tavua; 2299436 koodia). Pakkaussuhde: 1.64:1
+testdata.100k_freeze/urandom:  -12% (sisään 1000000 tavua; ulos 1126919 tavua; 369971 koodia). Pakkaussuhde: 0.89:1
+testdata.100k_freeze/zero:     99% (sisään 1000000 tavua; ulos 3729 tavua; 1414 koodia). Pakkaussuhde: 268.17:1
+3.14user 0.06system 0:03.13elapsed 101%CPU (0avgtext+0avgdata 217040maxresident)k
+0inputs+0outputs (0major+14355minor)pagefaults 0swaps
+31092	testdata
+12416	testdata.unlimited
+12076	testdata.100k_reset
+20980	testdata.100k_freeze
+========================
+Purku: unlimited
+========================
+3.01user 0.16system 0:02.51elapsed 126%CPU (0avgtext+0avgdata 1211360maxresident)k
+0inputs+0outputs (0major+76428minor)pagefaults 0swaps
+Purku OK!
+========================
+Purku: 100k_reset
+========================
+2.14user 0.07system 0:02.06elapsed 107%CPU (0avgtext+0avgdata 650608maxresident)k
+0inputs+0outputs (0major+41158minor)pagefaults 0swaps
+Purku OK!
+========================
+Purku: 100k_freeze
+========================
+2.76user 0.07system 0:02.62elapsed 107%CPU (0avgtext+0avgdata 722880maxresident)k
+0inputs+0outputs (0major+45659minor)pagefaults 0swaps
+Purku OK!
+
 
 Tuloksia
 --------
@@ -81,8 +166,34 @@ Tuloksia
 LZ78-toteutuksen nopeus tällä testidatalla ja -koneella on n. 1/7
 compress-ohjelman nopeudesta ja n. 1/4 gzip-ohjelman nopeudesta.
 
-Pakkausteho on hieman huonompi kuin compress-ohjelmalla ja
+Pakkaussuhde on hieman huonompi kuin compress-ohjelmalla ja
 huomattavasti huonompi kuin gzip-ohjelmalla. Tässä testissä tosin
 vaikuttaa se, että compress ja gzip pakotettiin pakkaamaan sellaisia
 tiedostoja, jotka ne normaalitoiminnassa jättäisivät pakkaamatta
-(urandom, cantrbry.tar.gz).
+(urandom, cantrbry.tar.GZIP).
+
+Sanakirjan kokoa ei ole oletustilassa rajattu mitenkään, joten ohjelma
+käyttää muistia suhteessa pakattavan tiedoston kokoon. Jotta ohjelma
+olisi käyttökelpoinen suurilla tiedostoilla, sanakirjan koko pitää
+rajata.
+
+Hieman yllättäen sanakirjan koon rajoittaminen saattaa tuoda paremman
+pakkaussuhteen. Kun sanakirjan koko on 100000 sanaa ja strategia on
+sanakirjan tyhjentäminen (100k_reset), pakkaussuhde on hieman parempi
+kuin rajoittamattomalla sanakirjalla (2.57:1 vs 2.50:1) ja
+suoritusaika huomattavasti parempi (2.96s vs 4.02s). Todennäköisesti
+ero syntyy siinä, että koodit pysyvät pieninä, kun sanakirjan kokoa
+rajoitetaan.
+
+Sanakirjan jäädyttäminen sen sijaan tuotti huonoja tuloksia
+(pakkaussuhde vain 1.48:1, suoritusaika 3.14s). Ainoastaan
+dpkg.status-tiedostolla pakkaussuhde parani verrattuna sanakirjan
+tyhjentämiseen (2.33:1 vs 2.19:1). Täysvärisellä PPM-kuvalla
+(cubbli-sunset-in-massai-mara.ppm) sanakirjan jäädyttäminen 100000
+sanaan tuotti pakkaussuhteen 0.80:1 (sanakirjan tyhjentämisellä
+2.84:1). Tämä johtuu siitä, että kuvatiedoston tavujen jakauma muuttuu
+huomattavasti edettäessä tiedoston alusta tiedoston loppuun.
+Sanakirjan tyhjentäminen auttaa sopeutamaan jakauman muutokseen.
+
+Ohjelman luotettavuutta pitäisi parantaa lisäämällä tarkistussumma
+tulostiedostoon.
