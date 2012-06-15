@@ -2,9 +2,9 @@ package tiraht.lz78;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 import tiraht.lz78.LZ78Compressor.DictFillUpStrategy;
 import tiraht.util.ByteArray;
+import tiraht.util.HashTable;
 
 /**
  * Pura LZ78-kompressoinnin tuottamia <code>LZ78Token</code>-kohteita.
@@ -12,7 +12,7 @@ import tiraht.util.ByteArray;
  * @author jgsavola
  */
 public class LZ78HashMapDecompressor implements LZ78Decompressor {
-    private HashMap<Integer, ByteArray> reverseMap;
+    private HashTable reverseMap;
     private DictFillUpStrategy dictFillUpStrategy;
     private int dictSize;
 
@@ -37,7 +37,7 @@ public class LZ78HashMapDecompressor implements LZ78Decompressor {
         int index = 1;
         LZ78Token token;
         while ((token = reader.readLZ78Token()) != null) {
-            ByteArray key = reverseMap.get(token.getPrefixIndex());
+            ByteArray key = (ByteArray) reverseMap.get(token.getPrefixIndex());
             os.write(key.getBytes());
             os.write(token.getSuffixByte());
 
@@ -55,7 +55,7 @@ public class LZ78HashMapDecompressor implements LZ78Decompressor {
     }
 
     private void resetDictionary() {
-        this.reverseMap = new HashMap<Integer, ByteArray>();
+        this.reverseMap = new HashTable();
         this.reverseMap.put(0, new ByteArray());
     }
 }
