@@ -12,8 +12,8 @@ struct trie_node *trie_node_new(unsigned char key)
 	struct trie_node *node = xmalloc(sizeof(*node));
 	node->key = key;
 	node->node_is_valid = 0;
-	node->size_children = 1;
-	node->children = xcalloc(node->size_children, sizeof(struct trie_node *));
+	node->size_children_bits = 0;
+	node->children = xcalloc(SIZE_CHILDREN(node), sizeof(struct trie_node *));
 
 	return node;
 }
@@ -40,7 +40,7 @@ struct trie_node *trie_node_retrieve(struct trie_node *node, unsigned char key)
 static int binary_search(struct trie_node *node, unsigned char key)
 {
 	int left = 0;
-	int right = node->size_children - 1;
+	int right = SIZE_CHILDREN(node) - 1;
 
 	while (right >= left) {
 		int i = (left + right) / 2;
@@ -70,18 +70,18 @@ static struct trie_node *trie_node_find_child(struct trie_node *node, unsigned c
 static void trie_node_add_child(struct trie_node *node, struct trie_node *child)
 {
 	int first_free_index = 0;
-	for (int i = node->size_children - 1; i >= 0; i--) {
+	for (int i = SIZE_CHILDREN(node) - 1; i >= 0; i--) {
 		if (node->children[i]) {
 			first_free_index = i + 1;
 			break;
 		}
 	}
 	
-	if (first_free_index == node->size_children) {
-		size_t new_size = node->size_children*2;
+	if (first_free_index == SIZE_CHILDREN(node)) {
+		node->size_children_bits++;
+		size_t new_size = SIZE_CHILDREN(node);
 		node->children = xrealloc(node->children, new_size*sizeof(struct trie_node *));
-		node->size_children = new_size;
-		for (int i = first_free_index + 1; i < node->size_children; i++)
+		for (int i = first_free_index + 1; i < SIZE_CHILDREN(node); i++)
 			node->children[i] = NULL;
 	}
 	node->children[first_free_index] = child;
