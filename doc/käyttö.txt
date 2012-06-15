@@ -47,7 +47,7 @@ Optiot:
         Testataan ByteTrie-rakenteen suorityskykyä. Tulosteena on
         taulukko, jossa on suoritusaikoja trie-rakenteen eri haarautumisasteilla.
 
-  --test-bytetrie-phase-length
+  --test-bytetrie-phrase-length
         Testataan ByteTrie-rakenteen suorityskykyä. Tulosteena on
         taulukko, jossa on suoritusaikoja eripituisilla hakufraaseilla.
 
