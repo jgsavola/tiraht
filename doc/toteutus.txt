@@ -144,3 +144,61 @@ LZ78TokenReader
   |
   -- LZ78GeneralUnaryDecoder (Luetaan "General Unary"-menetelmällä
                               koodattua bittivirtaa.)
+
+Java vs C
+=========
+
+Javan muistinkäyttö jäi mietityttämään, joten tein yksinkertaisen
+toteutuksen LZ78-pakkausalgoritmista ja trie-rakenteesta C:llä.
+C-toteutus on suoraviivainen sovitus Java-toteutuksesta, joten
+tietorakenteiden ja algoritmien pitäisi käyttäytyä samalla tavalla.
+Erona on vain, että C:ssä muistinvaraus on toteutettu mallocilla ja
+Javassa new:llä roskienkeruineen.
+
+Suoraviivainen C-koodi olikin hieman nopeampi ja käytti hieman
+vähemmän muistia kuin Java-toteutus. Ero ei kuitenkaan ollut erityisen
+suuri: C-versio on n. 20% nopeampi ja muistinkäyttö oli n. 30%
+pienempi (maxresident-arvo alla).
+
+Java:
+
+$ /usr/bin/time java -jar dist/tiraht.jar --test-compress -v testdata/emacs
+testdata/emacs:                (sisään 10819544 tavua; ulos 1129636 koodia).
+1.14user 0.07system 0:00.97elapsed 123%CPU (0avgtext+0avgdata 444688maxresident)k
+0inputs+0outputs (0major+28148minor)pagefaults 0swaps
+
+C:
+
+$ /usr/bin/time ./c/tiraht_c testdata/emacs
+sisään 10819544 tavua; ulos 1129636 koodia
+0.77user 0.01system 0:00.79elapsed 98%CPU (0avgtext+0avgdata 315520maxresident)k
+0inputs+0outputs (0major+19759minor)pagefaults 0swaps
+
+C-toteutus:
+
+* Pääohjelma:
+  c/main.c
+
+* LZ78-algoritmi (pakkaus):
+  c/lz78.h
+  c/lz78.c
+
+* Trie-rakenne (avain tavujono, arvo kokonaisluku):
+  c/trie.h
+  c/trie.c
+
+* malloc-kääreet:
+  c/util.h
+  c/util.c
+
+* Makefile:
+
+  c/Makefile
+
+Kääntäminen:
+
+  (cd c && make clean; make)
+
+Käyttö:
+
+  ./c/tiraht_c tiedosto1 [tiedosto2 ...]
